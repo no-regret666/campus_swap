@@ -1,0 +1,170 @@
+{
+  "users": [
+    {
+      "id": "u1",
+      "username": "202401001",
+      "password": "123456",
+      "nickname": "林可",
+      "avatar": "",
+      "role": "student",
+      "campus": "主校区"
+    },
+    {
+      "id": "u2",
+      "username": "202401002",
+      "password": "123456",
+      "nickname": "周然",
+      "avatar": "",
+      "role": "student",
+      "campus": "主校区"
+    },
+    {
+      "id": "u3",
+      "username": "202401003",
+      "password": "123456",
+      "nickname": "陈舟",
+      "avatar": "",
+      "role": "student",
+      "campus": "南校区"
+    },
+    {
+      "id": "admin",
+      "username": "admin",
+      "password": "admin123",
+      "nickname": "管理员",
+      "avatar": "",
+      "role": "admin",
+      "campus": "主校区"
+    }
+  ],
+  "categories": [
+    {
+      "id": "digital",
+      "name": "数码设备",
+      "icon": "💻"
+    },
+    {
+      "id": "sport",
+      "name": "运动户外",
+      "icon": "⚽"
+    },
+    {
+      "id": "life",
+      "name": "生活用品",
+      "icon": "🏠"
+    },
+    {
+      "id": "art",
+      "name": "文创乐器",
+      "icon": "🎨"
+    },
+    {
+      "id": "skill",
+      "name": "技能服务",
+      "icon": "🛠"
+    }
+  ],
+  "items": [
+    {
+      "id": "item1",
+      "title": "iPad Air 5",
+      "description": "2022款 64G WiFi版，带笔和键盘",
+      "images": [],
+      "category": "digital",
+      "campus": "主校区",
+      "condition": "几乎全新",
+      "ownerId": "u1",
+      "wantExchange": "想换一台Kindle或机械键盘",
+      "status": "available",
+      "views": 35,
+      "createdAt": "2026-05-01 10:00:00"
+    },
+    {
+      "id": "item2",
+      "title": "尤克里里",
+      "description": "23寸桃花心木面单，附带琴包和调音器",
+      "images": [],
+      "category": "art",
+      "campus": "主校区",
+      "condition": "轻微使用",
+      "ownerId": "u2",
+      "wantExchange": "绘画工具或小音箱",
+      "status": "available",
+      "views": 19,
+      "createdAt": "2026-05-02 14:30:00"
+    },
+    {
+      "id": "item3",
+      "title": "哑铃套装 20kg",
+      "description": "包含杆和多片重量片",
+      "images": [],
+      "category": "sport",
+      "campus": "南校区",
+      "condition": "明显使用",
+      "ownerId": "u3",
+      "wantExchange": "瑜伽垫或跳绳等运动装备",
+      "status": "available",
+      "views": 13,
+      "createdAt": "2026-05-03 09:15:00"
+    },
+    {
+      "id": "item4",
+      "title": "台灯 护眼款",
+      "description": "LED护眼台灯，三档色温可调",
+      "images": [],
+      "category": "life",
+      "campus": "主校区",
+      "condition": "全新",
+      "ownerId": "u1",
+      "wantExchange": "任何生活用品都可以",
+      "status": "available",
+      "views": 4,
+      "createdAt": "2026-05-04 16:00:00"
+    }
+  ],
+  "exchanges": [
+    {
+      "id": "ex1",
+      "itemId": "item1",
+      "requesterId": "u2",
+      "ownerId": "u1",
+      "offerDesc": "我可以用尤克里里来换",
+      "message": "你好，我对你的iPad很感兴趣",
+      "status": "pending",
+      "createdAt": "2026-05-10 08:00:00",
+      "updatedAt": "2026-05-10 08:00:00"
+    }
+  ],
+  "messages": [
+    {
+      "id": "msg1",
+      "exchangeId": "ex1",
+      "senderId": "u2",
+      "content": "你好，iPad还在吗？我想用尤克里里交换",
+      "createdAt": "2026-05-10 08:00:00"
+    },
+    {
+      "id": "msg2",
+      "exchangeId": "ex1",
+      "senderId": "u1",
+      "content": "在的，你的尤克里里是什么牌子？",
+      "createdAt": "2026-05-10 08:30:00"
+    }
+  ],
+  "favorites": [
+    {
+      "id": "fav_1780541296997_9431",
+      "userId": "u1",
+      "itemId": "item1",
+      "createdAt": "2026-06-04 10:48:16"
+    },
+    {
+      "id": "fav_1780541330067_8948",
+      "userId": "u1",
+      "itemId": "item2",
+      "createdAt": "2026-06-04 10:48:50"
+    }
+  ],
+  "reports": [],
+  "ratings": []
+}
