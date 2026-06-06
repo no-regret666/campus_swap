@@ -76,7 +76,7 @@
       "ownerId": "u1",
       "wantExchange": "想换一台Kindle或机械键盘",
       "status": "available",
-      "views": 35,
+      "views": 38,
       "createdAt": "2026-05-01 10:00:00"
     },
     {
@@ -90,7 +90,7 @@
       "ownerId": "u2",
       "wantExchange": "绘画工具或小音箱",
       "status": "available",
-      "views": 19,
+      "views": 22,
       "createdAt": "2026-05-02 14:30:00"
     },
     {
@@ -104,7 +104,7 @@
       "ownerId": "u3",
       "wantExchange": "瑜伽垫或跳绳等运动装备",
       "status": "available",
-      "views": 13,
+      "views": 14,
       "createdAt": "2026-05-03 09:15:00"
     },
     {
@@ -120,6 +120,22 @@
       "status": "available",
       "views": 4,
       "createdAt": "2026-05-04 16:00:00"
+    },
+    {
+      "id": "item_1780763553080_0608",
+      "title": "充电宝",
+      "description": "小米 10000 33W",
+      "images": [
+        "/uploads/1780763551880879000_截屏2026-04-23_20.58.52.png"
+      ],
+      "category": "digital",
+      "campus": "南湖校区",
+      "condition": "九成新",
+      "ownerId": "u2",
+      "wantExchange": "",
+      "status": "available",
+      "views": 1,
+      "createdAt": "2026-06-07 00:32:33"
     }
   ],
   "exchanges": [
@@ -157,12 +173,6 @@
       "userId": "u1",
       "itemId": "item1",
       "createdAt": "2026-06-04 10:48:16"
-    },
-    {
-      "id": "fav_1780541330067_8948",
-      "userId": "u1",
-      "itemId": "item2",
-      "createdAt": "2026-06-04 10:48:50"
     }
   ],
   "reports": [],

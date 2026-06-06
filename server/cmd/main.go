@@ -97,6 +97,12 @@ func main() {
 	// 通知
 	api.GET("/notifications", middleware.AuthMiddleware(), handler.GetNotifications)
 
+	// 文件上传（模拟对象存储）
+	api.POST("/upload", middleware.AuthMiddleware(), handler.UploadImage)
+
+	// 静态文件服务（模拟对象存储CDN）
+	r.Static("/uploads", "./uploads")
+
 	// 启动服务
 	fmt.Printf("服务启动在 %s\n", config.ServerPort)
 	if err := r.Run(config.ServerPort); err != nil {

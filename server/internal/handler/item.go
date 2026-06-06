@@ -15,12 +15,21 @@ func GetItems(c *gin.Context) {
 	keyword := c.Query("keyword")
 	category := c.Query("category")
 	campus := c.Query("campus")
+	owner := c.Query("owner")
 
 	var results []model.Item
 	service.WithRead(func(d *model.Database) {
 		for _, item := range d.Items {
-			if item.Status != "available" {
-				continue
+			// 如果指定了owner，只返回该用户的物品（不限status）
+			if owner != "" {
+				if item.OwnerID != owner {
+					continue
+				}
+			} else {
+				// 广场只展示available的物品
+				if item.Status != "available" {
+					continue
+				}
 			}
 			if category != "" && item.Category != category {
 				continue
