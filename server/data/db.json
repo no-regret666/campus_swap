@@ -75,8 +75,8 @@
       "condition": "几乎全新",
       "ownerId": "u1",
       "wantExchange": "想换一台Kindle或机械键盘",
-      "status": "available",
-      "views": 38,
+      "status": "exchanged",
+      "views": 42,
       "createdAt": "2026-05-01 10:00:00"
     },
     {
@@ -90,7 +90,7 @@
       "ownerId": "u2",
       "wantExchange": "绘画工具或小音箱",
       "status": "available",
-      "views": 22,
+      "views": 32,
       "createdAt": "2026-05-02 14:30:00"
     },
     {
@@ -104,7 +104,7 @@
       "ownerId": "u3",
       "wantExchange": "瑜伽垫或跳绳等运动装备",
       "status": "available",
-      "views": 14,
+      "views": 16,
       "createdAt": "2026-05-03 09:15:00"
     },
     {
@@ -118,7 +118,7 @@
       "ownerId": "u1",
       "wantExchange": "任何生活用品都可以",
       "status": "available",
-      "views": 4,
+      "views": 7,
       "createdAt": "2026-05-04 16:00:00"
     },
     {
@@ -134,7 +134,7 @@
       "ownerId": "u2",
       "wantExchange": "",
       "status": "available",
-      "views": 1,
+      "views": 4,
       "createdAt": "2026-06-07 00:32:33"
     }
   ],
@@ -146,9 +146,31 @@
       "ownerId": "u1",
       "offerDesc": "我可以用尤克里里来换",
       "message": "你好，我对你的iPad很感兴趣",
-      "status": "pending",
+      "status": "completed",
       "createdAt": "2026-05-10 08:00:00",
-      "updatedAt": "2026-05-10 08:00:00"
+      "updatedAt": "2026-06-07 00:46:59"
+    },
+    {
+      "id": "ex_1780764062825_9414",
+      "itemId": "item1",
+      "requesterId": "u2",
+      "ownerId": "u1",
+      "offerDesc": "",
+      "message": "",
+      "status": "pending",
+      "createdAt": "2026-06-07 00:41:02",
+      "updatedAt": "2026-06-07 00:41:02"
+    },
+    {
+      "id": "ex_1780764443865_3428",
+      "itemId": "item2",
+      "requesterId": "u1",
+      "ownerId": "u2",
+      "offerDesc": "",
+      "message": "",
+      "status": "pending",
+      "createdAt": "2026-06-07 00:47:23",
+      "updatedAt": "2026-06-07 00:47:23"
     }
   ],
   "messages": [
@@ -165,6 +187,13 @@
       "senderId": "u1",
       "content": "在的，你的尤克里里是什么牌子？",
       "createdAt": "2026-05-10 08:30:00"
+    },
+    {
+      "id": "msg_1780764483394_0406",
+      "exchangeId": "ex_1780764443865_3428",
+      "senderId": "u2",
+      "content": "你好，我们约在哪里见面啊",
+      "createdAt": "2026-06-07 00:48:03"
     }
   ],
   "favorites": [

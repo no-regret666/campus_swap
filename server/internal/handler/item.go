@@ -144,3 +144,108 @@ func CreateItem(c *gin.Context) {
 		"item":    newItem,
 	})
 }
+
+// UpdateItem 修改自己发布的物品
+func UpdateItem(c *gin.Context) {
+	userId := c.GetString("userId")
+	id := c.Param("id")
+
+	var req struct {
+		Title        string   `json:"title"`
+		Description  string   `json:"description"`
+		Images       []string `json:"images"`
+		Category     string   `json:"category"`
+		Campus       string   `json:"campus"`
+		Condition    string   `json:"condition"`
+		WantExchange string   `json:"wantExchange"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "参数错误"})
+		return
+	}
+
+	var found bool
+	var updatedItem model.Item
+	service.WithWrite(func(d *model.Database) {
+		for i := range d.Items {
+			if d.Items[i].ID == id {
+				if d.Items[i].OwnerID != userId {
+					return
+				}
+				// 更新非空字段
+				if req.Title != "" {
+					d.Items[i].Title = req.Title
+				}
+				if req.Description != "" {
+					d.Items[i].Description = req.Description
+				}
+				if req.Images != nil {
+					d.Items[i].Images = req.Images
+				}
+				if req.Category != "" {
+					d.Items[i].Category = req.Category
+				}
+				if req.Campus != "" {
+					d.Items[i].Campus = req.Campus
+				}
+				if req.Condition != "" {
+					d.Items[i].Condition = req.Condition
+				}
+				if req.WantExchange != "" {
+					d.Items[i].WantExchange = req.WantExchange
+				}
+				updatedItem = d.Items[i]
+				found = true
+				break
+			}
+		}
+	})
+
+	if !found {
+		c.JSON(http.StatusNotFound, gin.H{"message": "物品不存在或无权修改"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "修改成功",
+		"item":    updatedItem,
+	})
+}
+
+// DeleteItem 删除自己发布的物品
+func DeleteItem(c *gin.Context) {
+	userId := c.GetString("userId")
+	id := c.Param("id")
+
+	var found bool
+	service.WithWrite(func(d *model.Database) {
+		for i := range d.Items {
+			if d.Items[i].ID == id {
+				if d.Items[i].OwnerID != userId {
+					return
+				}
+				// 从列表中删除
+				d.Items = append(d.Items[:i], d.Items[i+1:]...)
+				found = true
+				break
+			}
+		}
+		if found {
+			// 同时删除关联的收藏记录
+			var newFavorites []model.Favorite
+			for _, f := range d.Favorites {
+				if f.ItemID != id {
+					newFavorites = append(newFavorites, f)
+				}
+			}
+			d.Favorites = newFavorites
+		}
+	})
+
+	if !found {
+		c.JSON(http.StatusNotFound, gin.H{"message": "物品不存在或无权删除"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "删除成功"})
+}

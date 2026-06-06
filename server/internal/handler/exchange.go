@@ -9,21 +9,75 @@ import (
 	"campus-swap-server/internal/service"
 )
 
-// GetExchanges 获取当前用户相关的交换
+// ExchangeDetail 返回给前端的交换详情（包含关联信息）
+type ExchangeDetail struct {
+	ID            string `json:"id"`
+	ItemID        string `json:"itemId"`
+	RequesterId   string `json:"requesterId"`
+	OwnerId       string `json:"ownerId"`
+	OfferDesc     string `json:"offerDesc"`
+	Message       string `json:"message"`
+	Status        string `json:"status"`
+	CreatedAt     string `json:"createdAt"`
+	UpdatedAt     string `json:"updatedAt"`
+	ItemTitle     string `json:"itemTitle"`
+	ItemImage     string `json:"itemImage"`
+	ItemCategory  string `json:"itemCategory"`
+	RequesterName string `json:"requesterName"`
+	OwnerName     string `json:"ownerName"`
+}
+
+// GetExchanges 获取当前用户相关的交换（包含物品和用户详情）
 func GetExchanges(c *gin.Context) {
 	userId := c.GetString("userId")
 
-	var results []model.Exchange
+	var results []ExchangeDetail
 	service.WithRead(func(d *model.Database) {
+		// 建立物品和用户的索引
+		itemMap := make(map[string]model.Item)
+		for _, item := range d.Items {
+			itemMap[item.ID] = item
+		}
+		userMap := make(map[string]model.User)
+		for _, user := range d.Users {
+			userMap[user.ID] = user
+		}
+
 		for _, ex := range d.Exchanges {
 			if ex.RequesterID == userId || ex.OwnerID == userId {
-				results = append(results, ex)
+				detail := ExchangeDetail{
+					ID:          ex.ID,
+					ItemID:      ex.ItemID,
+					RequesterId: ex.RequesterID,
+					OwnerId:     ex.OwnerID,
+					OfferDesc:   ex.OfferDesc,
+					Message:     ex.Message,
+					Status:      ex.Status,
+					CreatedAt:   ex.CreatedAt,
+					UpdatedAt:   ex.UpdatedAt,
+				}
+				// 填充物品信息
+				if item, ok := itemMap[ex.ItemID]; ok {
+					detail.ItemTitle = item.Title
+					detail.ItemCategory = item.Category
+					if len(item.Images) > 0 {
+						detail.ItemImage = item.Images[0]
+					}
+				}
+				// 填充用户名
+				if user, ok := userMap[ex.RequesterID]; ok {
+					detail.RequesterName = user.Nickname
+				}
+				if user, ok := userMap[ex.OwnerID]; ok {
+					detail.OwnerName = user.Nickname
+				}
+				results = append(results, detail)
 			}
 		}
 	})
 
 	if results == nil {
-		results = []model.Exchange{}
+		results = []ExchangeDetail{}
 	}
 
 	c.JSON(http.StatusOK, gin.H{

@@ -51,6 +51,8 @@ func main() {
 		items.GET("", handler.GetItems)
 		items.GET("/:id", handler.GetItem)
 		items.POST("", middleware.AuthMiddleware(), handler.CreateItem)
+		items.PUT("/:id", middleware.AuthMiddleware(), handler.UpdateItem)
+		items.DELETE("/:id", middleware.AuthMiddleware(), handler.DeleteItem)
 	}
 
 	// 交换路由

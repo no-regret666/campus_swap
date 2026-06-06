@@ -1,7 +1,8 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import { useRoute } from 'vue-router'
-import { getItem } from '../api/items'
+import { useRoute, useRouter } from 'vue-router'
+import { getItem, updateItem, deleteItem } from '../api/items'
+import { uploadImage } from '../api/upload'
 import { createExchange } from '../api/exchanges'
 import { addFavorite, removeFavorite } from '../api/favorites'
 import { report } from '../api/misc'
@@ -9,6 +10,7 @@ import { useUserStore } from '../stores/user'
 import { useAppStore } from '../stores/app'
 
 const route = useRoute()
+const router = useRouter()
 const userStore = useUserStore()
 const appStore = useAppStore()
 
@@ -25,9 +27,14 @@ const exchangeForm = ref({ offeredItem: '', message: '' })
 const showReportModal = ref(false)
 const reportReason = ref('')
 
+// 编辑弹窗
+const showEditModal = ref(false)
+const editForm = ref({})
+const editUploading = ref(false)
+
 const isOwner = computed(() => {
   if (!item.value) return true
-  if (!userStore.user) return false // 用户信息未加载时不隐藏按钮
+  if (!userStore.user) return false
   const itemOwnerId = item.value.ownerId || item.value.owner?.id || item.value.owner
   const userId = userStore.user.id || userStore.user._id
   return itemOwnerId === userId
@@ -105,6 +112,70 @@ async function handleReport() {
     appStore.showToast('举报失败', 'error')
   }
 }
+
+// 打开编辑弹窗
+function openEdit() {
+  editForm.value = {
+    title: item.value.title || '',
+    description: item.value.description || '',
+    category: item.value.category || '',
+    campus: item.value.campus || '',
+    condition: item.value.condition || '',
+    wantExchange: item.value.wantExchange || '',
+    images: item.value.images ? [...item.value.images] : []
+  }
+  showEditModal.value = true
+}
+
+// 编辑时上传图片
+async function handleEditImageSelect(e) {
+  const file = e.target.files[0]
+  if (!file) return
+  editUploading.value = true
+  try {
+    const res = await uploadImage(file)
+    editForm.value.images.push(res.url)
+  } catch (err) {
+    appStore.showToast('图片上传失败', 'error')
+  } finally {
+    editUploading.value = false
+    e.target.value = ''
+  }
+}
+
+function removeEditImage(index) {
+  editForm.value.images.splice(index, 1)
+}
+
+// 提交修改
+async function handleEdit() {
+  if (!editForm.value.title) {
+    appStore.showToast('标题不能为空', 'warning')
+    return
+  }
+  try {
+    const id = item.value._id || item.value.id
+    const res = await updateItem(id, editForm.value)
+    item.value = res.item || { ...item.value, ...editForm.value }
+    appStore.showToast('修改成功', 'success')
+    showEditModal.value = false
+  } catch (e) {
+    appStore.showToast('修改失败', 'error')
+  }
+}
+
+// 删除物品
+async function handleDelete() {
+  if (!confirm('确定要删除这个物品吗？删除后不可恢复。')) return
+  try {
+    const id = item.value._id || item.value.id
+    await deleteItem(id)
+    appStore.showToast('删除成功', 'success')
+    router.push('/profile')
+  } catch (e) {
+    appStore.showToast('删除失败', 'error')
+  }
+}
 </script>
 
 <template>
@@ -151,10 +222,11 @@ async function handleReport() {
           <button v-if="!isOwner" class="btn btn-primary" @click="showExchangeModal = true">
             🔄 申请交换
           </button>
-          <button v-if="isOwner" class="btn btn-secondary" disabled>
-            🚫 自己的物品，不可交换
-          </button>
-          <button class="btn btn-danger" @click="showReportModal = true">
+          <template v-if="isOwner">
+            <button class="btn btn-primary" @click="openEdit">✏️ 编辑</button>
+            <button class="btn btn-danger" @click="handleDelete">🗑️ 删除</button>
+          </template>
+          <button v-if="!isOwner" class="btn btn-danger" @click="showReportModal = true">
             ⚠️ 举报
           </button>
         </div>
@@ -191,6 +263,60 @@ async function handleReport() {
         <div class="modal-actions">
           <button class="btn btn-secondary" @click="showReportModal = false">取消</button>
           <button class="btn btn-danger" @click="handleReport">提交举报</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 编辑弹窗 -->
+    <div v-if="showEditModal" class="modal-overlay" @click.self="showEditModal = false">
+      <div class="modal card edit-modal">
+        <h3>编辑物品</h3>
+        <div class="form-group">
+          <label>标题</label>
+          <input v-model="editForm.title" class="form-input" placeholder="物品标题" />
+        </div>
+        <div class="form-group">
+          <label>描述</label>
+          <textarea v-model="editForm.description" class="form-input" rows="3" placeholder="物品描述"></textarea>
+        </div>
+        <div class="form-group">
+          <label>校区</label>
+          <select v-model="editForm.campus" class="form-input">
+            <option value="南湖校区">南湖校区</option>
+            <option value="东湖校区">东湖校区</option>
+            <option value="线上">线上</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>成色</label>
+          <select v-model="editForm.condition" class="form-input">
+            <option value="全新">全新</option>
+            <option value="九成新">九成新</option>
+            <option value="八成新">八成新</option>
+            <option value="七成新">七成新</option>
+            <option value="六成新及以下">六成新及以下</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>期望交换</label>
+          <input v-model="editForm.wantExchange" class="form-input" placeholder="期望交换的物品" />
+        </div>
+        <div class="form-group">
+          <label>图片</label>
+          <div class="edit-images">
+            <div v-for="(img, idx) in editForm.images" :key="idx" class="edit-img-item">
+              <img :src="img" />
+              <button type="button" class="img-remove" @click="removeEditImage(idx)">×</button>
+            </div>
+            <label v-if="(editForm.images || []).length < 3" class="img-add-btn">
+              <input type="file" accept="image/*" @change="handleEditImageSelect" style="display:none" :disabled="editUploading" />
+              <span>{{ editUploading ? '...' : '+' }}</span>
+            </label>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" @click="showEditModal = false">取消</button>
+          <button class="btn btn-primary" @click="handleEdit">保存修改</button>
         </div>
       </div>
     </div>
@@ -307,5 +433,67 @@ async function handleReport() {
   gap: 12px;
   justify-content: flex-end;
   margin-top: 16px;
+}
+
+.edit-modal {
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.edit-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.edit-img-item {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #e0e0e0;
+}
+
+.edit-img-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.img-remove {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  width: 18px;
+  height: 18px;
+  border: none;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.img-add-btn {
+  width: 64px;
+  height: 64px;
+  border: 2px dashed #ccc;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 24px;
+  color: #999;
+}
+
+.img-add-btn:hover {
+  border-color: #4caf50;
+  color: #4caf50;
 }
 </style>

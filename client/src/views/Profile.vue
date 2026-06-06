@@ -1,10 +1,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getItems } from '../api/items'
+import { useRouter } from 'vue-router'
+import { getItems, deleteItem } from '../api/items'
 import { useUserStore } from '../stores/user'
 import { useAppStore } from '../stores/app'
 import ItemCard from '../components/ItemCard.vue'
 
+const router = useRouter()
 const userStore = useUserStore()
 const appStore = useAppStore()
 
@@ -26,6 +28,21 @@ async function loadMyItems() {
     appStore.showToast('加载物品失败', 'error')
   } finally {
     loading.value = false
+  }
+}
+
+function goEdit(item) {
+  router.push(`/item/${item._id || item.id}`)
+}
+
+async function handleDelete(item) {
+  if (!confirm(`确定删除「${item.title}」吗？删除后不可恢复。`)) return
+  try {
+    await deleteItem(item._id || item.id)
+    appStore.showToast('删除成功', 'success')
+    myItems.value = myItems.value.filter(i => (i._id || i.id) !== (item._id || item.id))
+  } catch (e) {
+    appStore.showToast('删除失败', 'error')
   }
 }
 </script>
@@ -64,8 +81,24 @@ async function loadMyItems() {
     <!-- 我发布的物品 -->
     <h2 class="section-title">我发布的物品</h2>
     <div v-if="loading" class="empty-state">加载中...</div>
-    <div v-else-if="myItems.length" class="grid-items">
-      <ItemCard v-for="item in myItems" :key="item._id || item.id" :item="item" />
+    <div v-else-if="myItems.length" class="my-items-list">
+      <div v-for="item in myItems" :key="item._id || item.id" class="my-item-row card">
+        <div class="my-item-left" @click="goEdit(item)">
+          <img v-if="item.images && item.images.length" :src="item.images[0]" class="my-item-img" />
+          <div v-else class="my-item-img placeholder">📦</div>
+          <div class="my-item-info">
+            <h4>{{ item.title }}</h4>
+            <p>{{ item.category }} · {{ item.condition || '未标注' }} · {{ item.campus }}</p>
+            <span class="badge" :class="item.status === 'available' ? 'badge-success' : 'badge-warning'">
+              {{ item.status === 'available' ? '可交换' : '已交换' }}
+            </span>
+          </div>
+        </div>
+        <div class="my-item-actions">
+          <button class="btn btn-secondary btn-sm" @click="goEdit(item)">✏️ 编辑</button>
+          <button class="btn btn-danger btn-sm" @click="handleDelete(item)">🗑️ 删除</button>
+        </div>
+      </div>
     </div>
     <div v-else class="empty-state">
       <p>暂无发布的物品</p>
@@ -140,5 +173,68 @@ async function loadMyItems() {
   font-size: 18px;
   margin-bottom: 16px;
   color: var(--gray-800);
+}
+
+.my-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.my-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+}
+
+.my-item-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  flex: 1;
+  min-width: 0;
+}
+
+.my-item-img {
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.my-item-img.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gray-100);
+  font-size: 24px;
+}
+
+.my-item-info {
+  min-width: 0;
+}
+
+.my-item-info h4 {
+  font-size: 15px;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.my-item-info p {
+  font-size: 12px;
+  color: var(--gray-500);
+  margin-bottom: 4px;
+}
+
+.my-item-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+  margin-left: 12px;
 }
 </style>

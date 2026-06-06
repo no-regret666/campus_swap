@@ -4,7 +4,6 @@ import { getExchanges, updateExchange } from '../api/exchanges'
 import { rate } from '../api/misc'
 import { useUserStore } from '../stores/user'
 import { useAppStore } from '../stores/app'
-import ExchangeCard from '../components/ExchangeCard.vue'
 
 const userStore = useUserStore()
 const appStore = useAppStore()
@@ -20,18 +19,16 @@ const ratingExchange = ref(null)
 
 const sentExchanges = computed(() =>
   exchanges.value.filter(e => {
-    const requesterId = e.requester?._id || e.requester?.id || e.requester
-    const userId = userStore.user?._id || userStore.user?.id
-    return requesterId === userId
+    const userId = userStore.user?.id
+    return e.requesterId === userId
   })
 )
 
 const receivedExchanges = computed(() =>
   exchanges.value.filter(e => {
-    const requesterId = e.requester?._id || e.requester?.id || e.requester
-    const userId = userStore.user?._id || userStore.user?.id
-    return requesterId !== userId
-  }).map(e => ({ ...e, isOwner: true }))
+    const userId = userStore.user?.id
+    return e.ownerId === userId
+  })
 )
 
 onMounted(loadExchanges)
@@ -50,7 +47,7 @@ async function loadExchanges() {
 
 async function handleAccept(exchange) {
   try {
-    await updateExchange(exchange._id || exchange.id, { status: 'accepted' })
+    await updateExchange(exchange.id, { status: 'accepted' })
     appStore.showToast('已接受', 'success')
     loadExchanges()
   } catch (e) {
@@ -60,7 +57,7 @@ async function handleAccept(exchange) {
 
 async function handleReject(exchange) {
   try {
-    await updateExchange(exchange._id || exchange.id, { status: 'rejected' })
+    await updateExchange(exchange.id, { status: 'rejected' })
     appStore.showToast('已拒绝', 'success')
     loadExchanges()
   } catch (e) {
@@ -70,7 +67,7 @@ async function handleReject(exchange) {
 
 async function handleComplete(exchange) {
   try {
-    await updateExchange(exchange._id || exchange.id, { status: 'completed' })
+    await updateExchange(exchange.id, { status: 'completed' })
     appStore.showToast('交换已完成', 'success')
     loadExchanges()
   } catch (e) {
@@ -87,7 +84,7 @@ function openRate(exchange) {
 async function handleRate() {
   try {
     await rate({
-      exchangeId: ratingExchange.value._id || ratingExchange.value.id,
+      exchangeId: ratingExchange.value.id,
       score: rateForm.value.score,
       comment: rateForm.value.comment
     })
@@ -97,6 +94,16 @@ async function handleRate() {
     appStore.showToast('评价失败', 'error')
   }
 }
+
+function statusLabel(status) {
+  const map = { pending: '⏳ 待确认', accepted: '✅ 已接受', rejected: '❌ 已拒绝', completed: '🎉 已完成', cancelled: '🚫 已取消' }
+  return map[status] || status
+}
+
+function statusClass(status) {
+  const map = { pending: 'status-pending', accepted: 'status-accepted', rejected: 'status-rejected', completed: 'status-completed' }
+  return map[status] || ''
+}
 </script>
 
 <template>
@@ -104,8 +111,12 @@ async function handleRate() {
     <h1 class="page-title">交换管理</h1>
 
     <div class="tabs">
-      <button class="tab-btn" :class="{ active: activeTab === 'sent' }" @click="activeTab = 'sent'">我发起的</button>
-      <button class="tab-btn" :class="{ active: activeTab === 'received' }" @click="activeTab = 'received'">我收到的</button>
+      <button class="tab-btn" :class="{ active: activeTab === 'sent' }" @click="activeTab = 'sent'">
+        我发起的 ({{ sentExchanges.length }})
+      </button>
+      <button class="tab-btn" :class="{ active: activeTab === 'received' }" @click="activeTab = 'received'">
+        我收到的 ({{ receivedExchanges.length }})
+      </button>
     </div>
 
     <div v-if="loading" class="empty-state">加载中...</div>
@@ -114,29 +125,63 @@ async function handleRate() {
       <!-- 我发起的 -->
       <div v-if="activeTab === 'sent'">
         <div v-if="sentExchanges.length">
-          <div v-for="ex in sentExchanges" :key="ex._id || ex.id">
-            <ExchangeCard :exchange="ex" />
-            <div class="extra-actions" v-if="ex.status === 'accepted'">
-              <button class="btn btn-success btn-sm" @click="handleComplete(ex)">确认完成</button>
+          <div v-for="ex in sentExchanges" :key="ex.id" class="exchange-card card">
+            <div class="exchange-header">
+              <span class="status-badge" :class="statusClass(ex.status)">{{ statusLabel(ex.status) }}</span>
+              <span class="exchange-time">{{ new Date(ex.createdAt).toLocaleString() }}</span>
             </div>
-            <div class="extra-actions" v-if="ex.status === 'completed'">
-              <button class="btn btn-primary btn-sm" @click="openRate(ex)">⭐ 评价</button>
+            <div class="exchange-body">
+              <div class="exchange-item-info">
+                <img v-if="ex.itemImage" :src="ex.itemImage" class="exchange-item-img" />
+                <div class="exchange-item-img placeholder" v-else>📦</div>
+                <div class="exchange-detail">
+                  <h4>{{ ex.itemTitle || '未知物品' }}</h4>
+                  <p class="detail-row"><span class="label">物品所有者：</span>{{ ex.ownerName }}</p>
+                  <p class="detail-row"><span class="label">我提供交换：</span>{{ ex.offerDesc || '未填写' }}</p>
+                  <p class="detail-row" v-if="ex.message"><span class="label">留言：</span>{{ ex.message }}</p>
+                  <p class="detail-row" v-if="ex.itemCategory"><span class="label">分类：</span>{{ ex.itemCategory }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="exchange-actions">
+              <router-link :to="`/messages/${ex.id}`" class="btn btn-secondary btn-sm">💬 沟通</router-link>
+              <button v-if="ex.status === 'accepted'" class="btn btn-success btn-sm" @click="handleComplete(ex)">确认完成</button>
+              <button v-if="ex.status === 'completed'" class="btn btn-primary btn-sm" @click="openRate(ex)">⭐ 评价</button>
             </div>
           </div>
         </div>
-        <div v-else class="empty-state">暂无发起的交换</div>
+        <div v-else class="empty-state">暂无发起的交换申请</div>
       </div>
 
       <!-- 我收到的 -->
       <div v-if="activeTab === 'received'">
         <div v-if="receivedExchanges.length">
-          <div v-for="ex in receivedExchanges" :key="ex._id || ex.id">
-            <ExchangeCard :exchange="ex" @accept="handleAccept" @reject="handleReject" />
-            <div class="extra-actions" v-if="ex.status === 'accepted'">
-              <button class="btn btn-success btn-sm" @click="handleComplete(ex)">确认完成</button>
+          <div v-for="ex in receivedExchanges" :key="ex.id" class="exchange-card card">
+            <div class="exchange-header">
+              <span class="status-badge" :class="statusClass(ex.status)">{{ statusLabel(ex.status) }}</span>
+              <span class="exchange-time">{{ new Date(ex.createdAt).toLocaleString() }}</span>
             </div>
-            <div class="extra-actions" v-if="ex.status === 'completed'">
-              <button class="btn btn-primary btn-sm" @click="openRate(ex)">⭐ 评价</button>
+            <div class="exchange-body">
+              <div class="exchange-item-info">
+                <img v-if="ex.itemImage" :src="ex.itemImage" class="exchange-item-img" />
+                <div class="exchange-item-img placeholder" v-else>📦</div>
+                <div class="exchange-detail">
+                  <h4>{{ ex.itemTitle || '未知物品' }}</h4>
+                  <p class="detail-row"><span class="label">申请人：</span>{{ ex.requesterName }}</p>
+                  <p class="detail-row"><span class="label">对方提供交换：</span>{{ ex.offerDesc || '未填写' }}</p>
+                  <p class="detail-row" v-if="ex.message"><span class="label">留言：</span>{{ ex.message }}</p>
+                  <p class="detail-row" v-if="ex.itemCategory"><span class="label">分类：</span>{{ ex.itemCategory }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="exchange-actions">
+              <router-link :to="`/messages/${ex.id}`" class="btn btn-secondary btn-sm">💬 沟通</router-link>
+              <template v-if="ex.status === 'pending'">
+                <button class="btn btn-success btn-sm" @click="handleAccept(ex)">✓ 接受</button>
+                <button class="btn btn-danger btn-sm" @click="handleReject(ex)">✗ 拒绝</button>
+              </template>
+              <button v-if="ex.status === 'accepted'" class="btn btn-success btn-sm" @click="handleComplete(ex)">确认完成</button>
+              <button v-if="ex.status === 'completed'" class="btn btn-primary btn-sm" @click="openRate(ex)">⭐ 评价</button>
             </div>
           </div>
         </div>
@@ -192,14 +237,88 @@ async function handleRate() {
   border-bottom-color: var(--primary);
 }
 
-.extra-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: -8px;
+/* 交换卡片 */
+.exchange-card {
+  padding: 20px;
   margin-bottom: 16px;
-  padding-left: 20px;
 }
 
+.exchange-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.status-badge {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.status-pending { background: #fff3cd; color: #856404; }
+.status-accepted { background: #d4edda; color: #155724; }
+.status-rejected { background: #f8d7da; color: #721c24; }
+.status-completed { background: #cce5ff; color: #004085; }
+
+.exchange-time {
+  font-size: 12px;
+  color: var(--gray-400);
+}
+
+.exchange-item-info {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.exchange-item-img {
+  width: 72px;
+  height: 72px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.exchange-item-img.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gray-100);
+  font-size: 28px;
+}
+
+.exchange-detail {
+  flex: 1;
+}
+
+.exchange-detail h4 {
+  font-size: 16px;
+  margin-bottom: 8px;
+  color: var(--gray-800);
+}
+
+.detail-row {
+  font-size: 13px;
+  color: var(--gray-600);
+  margin-bottom: 4px;
+}
+
+.detail-row .label {
+  color: var(--gray-400);
+  margin-right: 4px;
+}
+
+.exchange-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--gray-100);
+}
+
+/* 弹窗 */
 .modal-overlay {
   position: fixed;
   top: 0;
