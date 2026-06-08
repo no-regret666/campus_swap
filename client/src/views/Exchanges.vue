@@ -83,8 +83,14 @@ function openRate(exchange) {
 
 async function handleRate() {
   try {
+    const userId = userStore.user?.id
+    // 确定评价对象：如果是申请人，评价物主；如果是物主，评价申请人
+    const toUserId = ratingExchange.value.requesterId === userId
+      ? ratingExchange.value.ownerId
+      : ratingExchange.value.requesterId
     await rate({
       exchangeId: ratingExchange.value.id,
+      toUserId: toUserId,
       score: rateForm.value.score,
       comment: rateForm.value.comment
     })

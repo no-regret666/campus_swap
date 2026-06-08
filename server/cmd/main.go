@@ -92,12 +92,16 @@ func main() {
 
 	// 举报
 	api.POST("/reports", middleware.AuthMiddleware(), handler.CreateReport)
+	api.GET("/reports", middleware.AuthMiddleware(), handler.GetReports)
+	api.PATCH("/reports/:id", middleware.AuthMiddleware(), handler.UpdateReport)
 
 	// 评价
 	api.POST("/ratings", middleware.AuthMiddleware(), handler.CreateRating)
+	api.GET("/ratings", middleware.AuthMiddleware(), handler.GetRatings)
 
 	// 通知
 	api.GET("/notifications", middleware.AuthMiddleware(), handler.GetNotifications)
+	api.PATCH("/notifications/:id/read", middleware.AuthMiddleware(), handler.MarkNotificationRead)
 
 	// 文件上传（模拟对象存储）
 	api.POST("/upload", middleware.AuthMiddleware(), handler.UploadImage)

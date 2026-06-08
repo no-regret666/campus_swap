@@ -75,8 +75,8 @@
       "condition": "几乎全新",
       "ownerId": "u1",
       "wantExchange": "想换一台Kindle或机械键盘",
-      "status": "exchanged",
-      "views": 42,
+      "status": "available",
+      "views": 14,
       "createdAt": "2026-05-01 10:00:00"
     },
     {
@@ -90,7 +90,7 @@
       "ownerId": "u2",
       "wantExchange": "绘画工具或小音箱",
       "status": "available",
-      "views": 32,
+      "views": 10,
       "createdAt": "2026-05-02 14:30:00"
     },
     {
@@ -104,7 +104,7 @@
       "ownerId": "u3",
       "wantExchange": "瑜伽垫或跳绳等运动装备",
       "status": "available",
-      "views": 16,
+      "views": 7,
       "createdAt": "2026-05-03 09:15:00"
     },
     {
@@ -118,24 +118,22 @@
       "ownerId": "u1",
       "wantExchange": "任何生活用品都可以",
       "status": "available",
-      "views": 7,
+      "views": 3,
       "createdAt": "2026-05-04 16:00:00"
     },
     {
-      "id": "item_1780763553080_0608",
-      "title": "充电宝",
-      "description": "小米 10000 33W",
-      "images": [
-        "/uploads/1780763551880879000_截屏2026-04-23_20.58.52.png"
-      ],
-      "category": "digital",
+      "id": "item_1780812458213_8332",
+      "title": "书本",
+      "description": "闲置书本",
+      "images": [],
+      "category": "life",
       "campus": "南湖校区",
       "condition": "九成新",
-      "ownerId": "u2",
+      "ownerId": "admin",
       "wantExchange": "",
       "status": "available",
-      "views": 4,
-      "createdAt": "2026-06-07 00:32:33"
+      "views": 1,
+      "createdAt": "2026-06-07 14:07:38"
     }
   ],
   "exchanges": [
@@ -146,31 +144,20 @@
       "ownerId": "u1",
       "offerDesc": "我可以用尤克里里来换",
       "message": "你好，我对你的iPad很感兴趣",
-      "status": "completed",
-      "createdAt": "2026-05-10 08:00:00",
-      "updatedAt": "2026-06-07 00:46:59"
-    },
-    {
-      "id": "ex_1780764062825_9414",
-      "itemId": "item1",
-      "requesterId": "u2",
-      "ownerId": "u1",
-      "offerDesc": "",
-      "message": "",
       "status": "pending",
-      "createdAt": "2026-06-07 00:41:02",
-      "updatedAt": "2026-06-07 00:41:02"
+      "createdAt": "2026-05-10 08:00:00",
+      "updatedAt": "2026-05-10 08:00:00"
     },
     {
-      "id": "ex_1780764443865_3428",
+      "id": "ex_1780812477738_9336",
       "itemId": "item2",
-      "requesterId": "u1",
+      "requesterId": "admin",
       "ownerId": "u2",
       "offerDesc": "",
       "message": "",
       "status": "pending",
-      "createdAt": "2026-06-07 00:47:23",
-      "updatedAt": "2026-06-07 00:47:23"
+      "createdAt": "2026-06-07 14:07:57",
+      "updatedAt": "2026-06-07 14:07:57"
     }
   ],
   "messages": [
@@ -187,23 +174,11 @@
       "senderId": "u1",
       "content": "在的，你的尤克里里是什么牌子？",
       "createdAt": "2026-05-10 08:30:00"
-    },
-    {
-      "id": "msg_1780764483394_0406",
-      "exchangeId": "ex_1780764443865_3428",
-      "senderId": "u2",
-      "content": "你好，我们约在哪里见面啊",
-      "createdAt": "2026-06-07 00:48:03"
     }
   ],
-  "favorites": [
-    {
-      "id": "fav_1780541296997_9431",
-      "userId": "u1",
-      "itemId": "item1",
-      "createdAt": "2026-06-04 10:48:16"
-    }
-  ],
+  "favorites": [],
   "reports": [],
-  "ratings": []
+  "ratings": [],
+  "notifications": null,
+  "auditLogs": null
 }

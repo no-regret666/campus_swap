@@ -88,16 +88,40 @@ type Rating struct {
 	CreatedAt  string `json:"createdAt"`
 }
 
+// Notification 通知
+type Notification struct {
+	ID        string `json:"id"`
+	UserID    string `json:"userId"`    // 通知的目标用户
+	Type      string `json:"type"`      // exchange_created / exchange_status / new_message / report_resolved
+	Title     string `json:"title"`     // 通知标题
+	Content   string `json:"content"`   // 通知内容
+	IsRead    bool   `json:"isRead"`    // 是否已读
+	RelatedID string `json:"relatedId"` // 关联ID（交换ID/举报ID等）
+	CreatedAt string `json:"createdAt"`
+}
+
+// AuditLog 审计日志
+type AuditLog struct {
+	ID          string `json:"id"`
+	Action      string `json:"action"`     // 操作类型：report_resolve / item_remove / user_ban 等
+	Description string `json:"description"` // 操作描述
+	OperatorID  string `json:"operatorId"`  // 操作人ID
+	TargetID    string `json:"targetId"`    // 目标ID
+	CreatedAt   string `json:"createdAt"`
+}
+
 // Database JSON 文件存储的完整结构
 type Database struct {
-	Users      []User     `json:"users"`
-	Categories []Category `json:"categories"`
-	Items      []Item     `json:"items"`
-	Exchanges  []Exchange `json:"exchanges"`
-	Messages   []Message  `json:"messages"`
-	Favorites  []Favorite `json:"favorites"`
-	Reports    []Report   `json:"reports"`
-	Ratings    []Rating   `json:"ratings"`
+	Users        []User        `json:"users"`
+	Categories   []Category    `json:"categories"`
+	Items        []Item        `json:"items"`
+	Exchanges    []Exchange    `json:"exchanges"`
+	Messages     []Message     `json:"messages"`
+	Favorites    []Favorite    `json:"favorites"`
+	Reports      []Report      `json:"reports"`
+	Ratings      []Rating      `json:"ratings"`
+	Notifications []Notification `json:"notifications"`
+	AuditLogs    []AuditLog    `json:"auditLogs"`
 }
 
 // LoginRequest 登录请求
