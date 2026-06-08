@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { createItem } from '../api/items'
 import { uploadImage } from '../api/upload'
 import { useAppStore } from '../stores/app'
+import BackButton from '../components/BackButton.vue'
 
 const router = useRouter()
 const appStore = useAppStore()
@@ -95,6 +96,7 @@ async function handleSubmit() {
 
 <template>
   <div class="container">
+    <BackButton />
     <h1 class="page-title">发布闲置物品</h1>
 
     <div class="publish-card card">

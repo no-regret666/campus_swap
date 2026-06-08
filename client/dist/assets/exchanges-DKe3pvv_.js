@@ -1,0 +1,1 @@
+import{B as a}from"./index-Dh2l9V34.js";const c=e=>a.get("/exchanges",{params:e}),g=e=>a.post("/exchanges",e),n=(e,s)=>a.patch(`/exchanges/${e}`,s),h=()=>a.get("/exchanges/overdue");export{h as a,g as c,c as g,n as u};

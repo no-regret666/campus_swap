@@ -76,7 +76,7 @@
       "ownerId": "u1",
       "wantExchange": "想换一台Kindle或机械键盘",
       "status": "available",
-      "views": 14,
+      "views": 23,
       "createdAt": "2026-05-01 10:00:00"
     },
     {
@@ -144,6 +144,8 @@
       "ownerId": "u1",
       "offerDesc": "我可以用尤克里里来换",
       "message": "你好，我对你的iPad很感兴趣",
+      "meetTime": "",
+      "meetPlace": "",
       "status": "pending",
       "createdAt": "2026-05-10 08:00:00",
       "updatedAt": "2026-05-10 08:00:00"
@@ -155,9 +157,24 @@
       "ownerId": "u2",
       "offerDesc": "",
       "message": "",
+      "meetTime": "",
+      "meetPlace": "",
       "status": "pending",
       "createdAt": "2026-06-07 14:07:57",
       "updatedAt": "2026-06-07 14:07:57"
+    },
+    {
+      "id": "ex_1780913433376_9370",
+      "itemId": "item1",
+      "requesterId": "u2",
+      "ownerId": "u1",
+      "offerDesc": "",
+      "message": "2",
+      "meetTime": "",
+      "meetPlace": "",
+      "status": "pending",
+      "createdAt": "2026-06-08 18:10:33",
+      "updatedAt": "2026-06-08 18:10:33"
     }
   ],
   "messages": [
@@ -166,6 +183,9 @@
       "exchangeId": "ex1",
       "senderId": "u2",
       "content": "你好，iPad还在吗？我想用尤克里里交换",
+      "images": null,
+      "isRead": false,
+      "isDeleted": false,
       "createdAt": "2026-05-10 08:00:00"
     },
     {
@@ -173,12 +193,98 @@
       "exchangeId": "ex1",
       "senderId": "u1",
       "content": "在的，你的尤克里里是什么牌子？",
+      "images": null,
+      "isRead": true,
+      "isDeleted": false,
       "createdAt": "2026-05-10 08:30:00"
+    },
+    {
+      "id": "msg_1780913195049_5542",
+      "exchangeId": "ex1",
+      "senderId": "u2",
+      "content": "111111",
+      "images": [
+        "/uploads/1780913195036722000_微信图片_20260608120105_41_186.png",
+        "/uploads/1780913195044221000_微信图片_20260608155857_44_186.png"
+      ],
+      "isRead": false,
+      "isDeleted": false,
+      "createdAt": "2026-06-08 18:06:35"
+    },
+    {
+      "id": "msg_1780913441787_9916",
+      "exchangeId": "ex_1780812477738_9336",
+      "senderId": "u2",
+      "content": "你好",
+      "images": null,
+      "isRead": false,
+      "isDeleted": false,
+      "createdAt": "2026-06-08 18:10:41"
+    },
+    {
+      "id": "msg_1780913451451_9128",
+      "exchangeId": "ex_1780812477738_9336",
+      "senderId": "u2",
+      "content": "2",
+      "images": [
+        "/uploads/1780913451441370000_微信图片_20260608120105_41_186.png",
+        "/uploads/1780913451447143000_微信图片_20260608155857_44_186.png"
+      ],
+      "isRead": false,
+      "isDeleted": false,
+      "createdAt": "2026-06-08 18:10:51"
+    },
+    {
+      "id": "msg_1780913524116_7967",
+      "exchangeId": "ex1",
+      "senderId": "u2",
+      "content": "1111",
+      "images": [
+        "/uploads/1780913524104591000_微信图片_20260608120105_41_186.png",
+        "/uploads/1780913524111734000_微信图片_20260608155857_44_186.png"
+      ],
+      "isRead": false,
+      "isDeleted": false,
+      "createdAt": "2026-06-08 18:12:04"
+    },
+    {
+      "id": "msg_1780913580905_1303",
+      "exchangeId": "ex_1780913433376_9370",
+      "senderId": "u2",
+      "content": "222",
+      "images": [
+        "/uploads/1780913580892572000_微信图片_20260608120105_41_186.png",
+        "/uploads/1780913580900060000_微信图片_20260608155857_44_186.png"
+      ],
+      "isRead": false,
+      "isDeleted": false,
+      "createdAt": "2026-06-08 18:13:00"
+    },
+    {
+      "id": "msg_1780913818795_7695",
+      "exchangeId": "ex_1780913433376_9370",
+      "senderId": "u2",
+      "content": "1111",
+      "images": null,
+      "isRead": false,
+      "isDeleted": false,
+      "createdAt": "2026-06-08 18:16:58"
     }
   ],
   "favorites": [],
   "reports": [],
   "ratings": [],
-  "notifications": null,
+  "notifications": [
+    {
+      "id": "notif_1780913433376_7115",
+      "userId": "u1",
+      "type": "exchange_request",
+      "title": "新的交换申请",
+      "content": "周然 想用 '' 交换你的 'iPad Air 5'",
+      "isRead": false,
+      "relatedId": "ex_1780913433376_9370",
+      "createdAt": "2026-06-08 18:10:33"
+    }
+  ],
   "auditLogs": null
 }

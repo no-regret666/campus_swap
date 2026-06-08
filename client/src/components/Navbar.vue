@@ -1,21 +1,48 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../stores/user'
 import { useAppStore } from '../stores/app'
+import { getUnreadCount, getAllUnreadByExchange } from '../api/messages'
+import { getUnreadNotificationCount } from '../api/notifications'
 
 const userStore = useUserStore()
 const appStore = useAppStore()
 const router = useRouter()
 const mobileMenuOpen = ref(false)
+const unreadCount = ref(0)
+const notifCount = ref(0)
 
-const unreadCount = computed(() => {
-  return appStore.notifications.filter(n => !n.read).length
+// 获取未读消息数和通知数
+onMounted(() => {
+  if (userStore.isLoggedIn) {
+    loadUnreadCounts()
+  }
 })
+
+async function loadUnreadCounts() {
+  try {
+    const [msgRes, notifRes] = await Promise.all([
+      getUnreadCount(),
+      getUnreadNotificationCount().catch(() => ({ unreadCount: 0 }))
+    ])
+    unreadCount.value = msgRes.unreadCount || 0
+    notifCount.value = notifRes.unreadCount || 0
+  } catch (e) {
+    // ignore
+  }
+}
 
 function handleLogout() {
   userStore.logout()
 }
+
+// 刷新未读数（当从其他页面返回时）
+router.afterEach(() => {
+  if (userStore.isLoggedIn) {
+    loadUnreadCounts()
+  }
+})
 </script>
 
 <template>
@@ -35,7 +62,12 @@ function handleLogout() {
         <router-link to="/recommendations" class="nav-link">推荐</router-link>
         <template v-if="userStore.isLoggedIn">
           <router-link to="/publish" class="nav-link">发布</router-link>
-          <router-link to="/exchanges" class="nav-link">交换</router-link>
+          <router-link to="/exchanges" class="nav-link">
+            交换<span v-if="unreadCount" class="badge">{{ unreadCount > 99 ? '99+' : unreadCount }}</span>
+          </router-link>
+          <router-link to="/notifications" class="nav-link nav-icon-link">
+            🔔<span v-if="notifCount" class="badge">{{ notifCount > 99 ? '99+' : notifCount }}</span>
+          </router-link>
           <router-link to="/favorites" class="nav-link">收藏</router-link>
           <router-link to="/admin" class="nav-link" v-if="userStore.isAdmin">后台</router-link>
           <router-link to="/profile" class="nav-link nav-user">
@@ -100,12 +132,33 @@ function handleLogout() {
   color: var(--gray-600);
   transition: all 0.2s;
   background: none;
+  position: relative;
 }
 
 .nav-link:hover,
 .nav-link.router-link-active {
   color: var(--primary);
   background: var(--primary-light);
+}
+
+.nav-icon-link {
+  font-size: 16px;
+}
+
+.badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  background: var(--danger);
+  color: white;
+  border-radius: 8px;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .nav-user {

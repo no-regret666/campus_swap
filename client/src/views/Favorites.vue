@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { getFavorites, removeFavorite } from '../api/favorites'
 import { useAppStore } from '../stores/app'
 import ItemCard from '../components/ItemCard.vue'
+import BackButton from '../components/BackButton.vue'
 
 const appStore = useAppStore()
 
@@ -36,6 +37,7 @@ async function handleRemove(item) {
 
 <template>
   <div class="container">
+    <BackButton />
     <h1 class="page-title">我的收藏</h1>
 
     <div v-if="loading" class="empty-state">加载中...</div>

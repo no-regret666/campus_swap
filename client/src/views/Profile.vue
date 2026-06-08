@@ -5,6 +5,7 @@ import { getItems, deleteItem } from '../api/items'
 import { useUserStore } from '../stores/user'
 import { useAppStore } from '../stores/app'
 import ItemCard from '../components/ItemCard.vue'
+import BackButton from '../components/BackButton.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -49,6 +50,7 @@ async function handleDelete(item) {
 
 <template>
   <div class="container">
+    <BackButton />
     <h1 class="page-title">个人中心</h1>
 
     <!-- 用户信息 -->

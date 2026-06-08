@@ -12,10 +12,33 @@ import (
 )
 
 // 上传目录（模拟对象存储）
-const uploadDir = "uploads"
+var uploadDir string
 
 func init() {
-	// 确保上传目录存在
+	// 优先使用环境变量指定的上传目录
+	if envDir := os.Getenv("UPLOAD_DIR"); envDir != "" {
+		uploadDir = envDir
+	} else {
+		// 使用相对于可执行文件或当前工作目录的上传目录
+		// 尝试获取当前可执行文件所在目录
+		exePath, err := os.Executable()
+		if err == nil {
+			// 检查是否在 go run 的临时目录中
+			if !strings.Contains(exePath, "go-build") {
+				uploadDir = filepath.Join(filepath.Dir(exePath), "uploads")
+			} else {
+				// go run 模式，使用 cwd 作为基准
+				cwd, err := os.Getwd()
+				if err == nil {
+					uploadDir = filepath.Join(cwd, "uploads")
+				} else {
+					uploadDir = "uploads"
+				}
+			}
+		} else {
+			uploadDir = "uploads"
+		}
+	}
 	os.MkdirAll(uploadDir, 0755)
 }
 

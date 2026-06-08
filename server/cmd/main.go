@@ -62,6 +62,7 @@ func main() {
 		exchanges.GET("", handler.GetExchanges)
 		exchanges.POST("", handler.CreateExchange)
 		exchanges.PATCH("/:id", handler.UpdateExchange)
+		exchanges.GET("/overdue", handler.GetOverdueExchanges)
 	}
 
 	// 消息路由
@@ -70,6 +71,8 @@ func main() {
 	{
 		messages.GET("/:exchangeId", handler.GetMessages)
 		messages.POST("", handler.SendMessage)
+		messages.GET("/unread/count", handler.GetUnreadCount)
+		messages.POST("/:exchangeId/read", handler.MarkMessagesRead)
 	}
 
 	// 收藏路由
@@ -101,6 +104,7 @@ func main() {
 
 	// 通知
 	api.GET("/notifications", middleware.AuthMiddleware(), handler.GetNotifications)
+	api.GET("/notifications/unread-count", middleware.AuthMiddleware(), handler.GetUnreadNotificationCount)
 	api.PATCH("/notifications/:id/read", middleware.AuthMiddleware(), handler.MarkNotificationRead)
 
 	// 文件上传（模拟对象存储）
