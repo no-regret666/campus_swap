@@ -15,7 +15,8 @@ async function loadDashboard() {
   loading.value = true
   try {
     const res = await getDashboard()
-    dashboard.value = res.dashboard || res
+    // 后端返回 { stats: {...}, dashboard: {...} }，取 stats 数据
+    dashboard.value = res.stats || res.dashboard || res
   } catch (e) {
     appStore.showToast('加载看板数据失败', 'error')
   } finally {

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -32,6 +33,43 @@ func GetDashboard(c *gin.Context) {
 				pendingReports++
 			}
 		}
+
+		// 热门分类统计
+		categoryCount := make(map[string]int)
+		for _, item := range d.Items {
+			if item.Status == "available" {
+				categoryCount[item.Category]++
+			}
+		}
+		type hotCategory struct {
+			Category string `json:"category"`
+			Name     string `json:"name"`
+			Count    int    `json:"count"`
+		}
+		var hotCategories []hotCategory
+		for catID, count := range categoryCount {
+			name := catID
+			for _, cat := range d.Categories {
+				if cat.ID == catID {
+					name = cat.Name
+					break
+				}
+			}
+			hotCategories = append(hotCategories, hotCategory{
+				Category: catID,
+				Name:     name,
+				Count:    count,
+			})
+		}
+		// 按数量降序排序
+		for i := 0; i < len(hotCategories); i++ {
+			for j := i + 1; j < len(hotCategories); j++ {
+				if hotCategories[j].Count > hotCategories[i].Count {
+					hotCategories[i], hotCategories[j] = hotCategories[j], hotCategories[i]
+				}
+			}
+		}
+
 		stats = gin.H{
 			"userCount":      len(d.Users),
 			"itemCount":      len(d.Items),
@@ -39,49 +77,101 @@ func GetDashboard(c *gin.Context) {
 			"reportCount":    len(d.Reports),
 			"pendingReports": pendingReports,
 			"messageCount":   len(d.Messages),
+			"hotCategories":  hotCategories,
 		}
 	})
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "ok",
-		"stats":   stats,
+		"message":   "ok",
+		"stats":     stats,
+		"dashboard": stats,
 	})
 }
 
-// GetRecommendations 推荐物品（基于收藏偏好）
+// GetRecommendations 推荐物品（基于收藏+浏览的加权分类偏好）
 func GetRecommendations(c *gin.Context) {
 	userId := c.GetString("userId")
 
-	var recommendations []model.Item
+	type ScoredItem struct {
+		Item  model.Item
+		Score float64
+	}
+
+	var results []ScoredItem
 	service.WithRead(func(d *model.Database) {
-		// 获取用户收藏的分类偏好
-		categoryPrefs := make(map[string]bool)
+		// 1. 计算分类偏好权重
+		//    收藏同一分类的物品：每个 +5 分
+		//    浏览同一分类的物品：每个 +1 分
+		categoryPrefs := make(map[string]float64)
+
 		for _, fav := range d.Favorites {
 			if fav.UserID == userId {
 				for _, item := range d.Items {
 					if item.ID == fav.ItemID {
-						categoryPrefs[item.Category] = true
+						categoryPrefs[item.Category] += 5
 						break
 					}
 				}
 			}
 		}
 
-		// 根据偏好推荐物品
+		for _, br := range d.BrowseRecords {
+			if br.UserID == userId {
+				categoryPrefs[br.Category] += 1
+			}
+		}
+
+		// 2. 对每个可用物品计算推荐分数
 		for _, item := range d.Items {
 			if item.Status != "available" || item.OwnerID == userId {
 				continue
 			}
-			if len(categoryPrefs) == 0 || categoryPrefs[item.Category] {
-				recommendations = append(recommendations, item)
+
+			score := categoryPrefs[item.Category] // 分类偏好分
+
+			// 时间衰减：越新越好，7天内加分
+			if item.CreatedAt != "" {
+				createdTime, err := time.Parse("2006-01-02 15:04:05", item.CreatedAt)
+				if err == nil {
+					hoursAgo := time.Since(createdTime).Hours()
+					if hoursAgo < 24 {
+						score += 3 // 1天内
+					} else if hoursAgo < 72 {
+						score += 2 // 3天内
+					} else if hoursAgo < 168 {
+						score += 1 // 7天内
+					}
+				}
+			}
+
+			// 没有任何偏好时，浏览量高的排前面
+			if len(categoryPrefs) == 0 {
+				score = float64(item.Views)*0.1 + 1
+			}
+
+			results = append(results, ScoredItem{Item: item, Score: score})
+		}
+
+		// 3. 按分数降序排序
+		for i := 0; i < len(results); i++ {
+			for j := i + 1; j < len(results); j++ {
+				if results[j].Score > results[i].Score {
+					results[i], results[j] = results[j], results[i]
+				}
 			}
 		}
 
-		// 如果没有偏好，返回所有可用物品（最多10个）
-		if len(recommendations) > 10 {
-			recommendations = recommendations[:10]
+		// 4. 最多返回 10 个
+		if len(results) > 10 {
+			results = results[:10]
 		}
 	})
+
+	// 提取物品列表
+	var recommendations []model.Item
+	for _, r := range results {
+		recommendations = append(recommendations, r.Item)
+	}
 
 	if recommendations == nil {
 		recommendations = []model.Item{}
@@ -98,12 +188,23 @@ func CreateReport(c *gin.Context) {
 	userId := c.GetString("userId")
 
 	var req struct {
-		TargetID string `json:"targetId" binding:"required"`
-		Type     string `json:"type" binding:"required"`
-		Reason   string `json:"reason" binding:"required"`
+		TargetID   string `json:"targetId" binding:"required"`
+		Type       string `json:"type"`
+		TargetType string `json:"targetType"`
+		Reason     string `json:"reason" binding:"required"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "请填写举报信息"})
+		return
+	}
+
+	// 兼容 type 和 targetType 两种字段名
+	reportType := req.Type
+	if reportType == "" {
+		reportType = req.TargetType
+	}
+	if reportType == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "请指定举报类型"})
 		return
 	}
 
@@ -111,7 +212,7 @@ func CreateReport(c *gin.Context) {
 		ID:        service.GenID("rpt"),
 		UserID:    userId,
 		TargetID:  req.TargetID,
-		Type:      req.Type,
+		Type:      reportType,
 		Reason:    req.Reason,
 		Status:    "pending",
 		CreatedAt: model.TimeNow(),
@@ -223,12 +324,19 @@ func UpdateReport(c *gin.Context) {
 // GetRatings 获取评价列表
 func GetRatings(c *gin.Context) {
 	toUserId := c.Query("toUserId")
+	userId := c.Query("userId") // 兼容前端传 userId 参数
+
+	// toUserId 优先，否则用 userId
+	targetUserId := toUserId
+	if targetUserId == "" {
+		targetUserId = userId
+	}
 
 	var ratings []model.Rating
 	service.WithRead(func(d *model.Database) {
-		if toUserId != "" {
+		if targetUserId != "" {
 			for _, r := range d.Ratings {
-				if r.ToUserID == toUserId {
+				if r.ToUserID == targetUserId {
 					ratings = append(ratings, r)
 				}
 			}
@@ -241,9 +349,23 @@ func GetRatings(c *gin.Context) {
 		ratings = []model.Rating{}
 	}
 
+	// 计算平均分和评价数
+	var avgScore float64
+	var ratingCount int
+	if len(ratings) > 0 {
+		var total int
+		for _, r := range ratings {
+			total += r.Score
+		}
+		avgScore = float64(total) / float64(len(ratings))
+		ratingCount = len(ratings)
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"message": "ok",
-		"ratings": ratings,
+		"message":     "ok",
+		"ratings":     ratings,
+		"avgScore":    avgScore,
+		"ratingCount": ratingCount,
 	})
 }
 

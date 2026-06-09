@@ -59,7 +59,6 @@ router.afterEach(() => {
 
       <nav class="navbar-nav" :class="{ open: mobileMenuOpen }" @click="mobileMenuOpen = false">
         <router-link to="/" class="nav-link">广场</router-link>
-        <router-link to="/recommendations" class="nav-link">推荐</router-link>
         <template v-if="userStore.isLoggedIn">
           <router-link to="/publish" class="nav-link">发布</router-link>
           <router-link to="/exchanges" class="nav-link">

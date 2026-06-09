@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { getExchanges, updateExchange, getOverdueExchanges } from '../api/exchanges'
+import { getExchanges, updateExchange } from '../api/exchanges'
 import { rate } from '../api/misc'
 import { useUserStore } from '../stores/user'
 import { useAppStore } from '../stores/app'
@@ -16,11 +16,6 @@ const activeTab = ref('sent')
 // 搜索和筛选
 const searchKeyword = ref('')
 const statusFilter = ref('')
-const startDate = ref('')
-const endDate = ref('')
-
-// 逾期提醒
-const overdueExchanges = ref([])
 
 // meet时间/地点弹窗
 const showMeetModal = ref(false)
@@ -48,7 +43,6 @@ const receivedExchanges = computed(() =>
 
 onMounted(() => {
   loadExchanges()
-  loadOverdue()
 })
 
 async function loadExchanges() {
@@ -57,23 +51,12 @@ async function loadExchanges() {
     const params = {}
     if (searchKeyword.value) params.search = searchKeyword.value
     if (statusFilter.value) params.status = statusFilter.value
-    if (startDate.value) params.startDate = startDate.value
-    if (endDate.value) params.endDate = endDate.value
     const res = await getExchanges(params)
     exchanges.value = res.exchanges || res || []
   } catch (e) {
     appStore.showToast('加载交换记录失败', 'error')
   } finally {
     loading.value = false
-  }
-}
-
-async function loadOverdue() {
-  try {
-    const res = await getOverdueExchanges()
-    overdueExchanges.value = res.overdue || []
-  } catch (e) {
-    // 忽略错误
   }
 }
 
@@ -149,8 +132,15 @@ function openRate(exchange) {
 
 async function handleRate() {
   try {
+    // toUserId: 评价的对方用户ID
+    const userId = userStore.user?.id
+    let toUserId = ratingExchange.value.ownerId
+    if (userId === ratingExchange.value.ownerId) {
+      toUserId = ratingExchange.value.requesterId
+    }
     await rate({
       exchangeId: ratingExchange.value.id,
+      toUserId: toUserId,
       score: rateForm.value.score,
       comment: rateForm.value.comment
     })
@@ -182,35 +172,12 @@ function statusClass(status) {
   }
   return map[status] || ''
 }
-
-function formatOverdue(hours) {
-  if (hours >= 72) return `${Math.floor(hours/24)}天`
-  return `${hours}小时`
-}
-
-function clearDateFilter() {
-  startDate.value = ''
-  endDate.value = ''
-  loadExchanges()
-}
 </script>
 
 <template>
   <div class="container">
     <BackButton />
     <h1 class="page-title">交换管理</h1>
-
-    <!-- 逾期提醒 -->
-    <div v-if="overdueExchanges.length > 0" class="overdue-warning card">
-      <div class="overdue-header">
-        <span class="overdue-icon">⚠️</span>
-        <span>您有 {{ overdueExchanges.length }} 个交换待处理（超过24小时）</span>
-      </div>
-      <div v-for="ex in overdueExchanges" :key="ex.id" class="overdue-item">
-        <span>{{ ex.itemTitle }}</span>
-        <span class="overdue-time">已逾期 {{ formatOverdue(ex.overdueHours) }}</span>
-      </div>
-    </div>
 
     <!-- 搜索和筛选 -->
     <div class="search-bar">
@@ -229,15 +196,6 @@ function clearDateFilter() {
         <option value="cancelled">已取消</option>
       </select>
       <button class="btn btn-secondary" @click="loadExchanges">搜索</button>
-    </div>
-
-    <!-- 日期筛选 -->
-    <div class="date-filter">
-      <span class="filter-label">筛选日期：</span>
-      <input type="date" v-model="startDate" class="form-input date-input" @change="loadExchanges" />
-      <span class="filter-separator">至</span>
-      <input type="date" v-model="endDate" class="form-input date-input" @change="loadExchanges" />
-      <button v-if="startDate || endDate" class="btn btn-outline btn-sm" @click="clearDateFilter">清除</button>
     </div>
 
     <div class="tabs">
@@ -388,31 +346,6 @@ function clearDateFilter() {
 
 .status-select {
   width: 120px;
-}
-
-/* 日期筛选 */
-.date-filter {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
-  flex-wrap: wrap;
-}
-
-.filter-label {
-  font-size: 13px;
-  color: var(--gray-500);
-}
-
-.filter-separator {
-  font-size: 13px;
-  color: var(--gray-400);
-}
-
-.date-input {
-  width: 140px;
-  padding: 8px 12px;
-  font-size: 13px;
 }
 
 /* 逾期提醒 */

@@ -4,13 +4,14 @@ import "time"
 
 // User 用户模型
 type User struct {
-	ID       string `json:"id"`
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Nickname string `json:"nickname"`
-	Avatar   string `json:"avatar"`
-	Role     string `json:"role"` // student / admin
-	Campus   string `json:"campus"`
+	ID          string `json:"id"`
+	Username    string `json:"username"`
+	Password    string `json:"password"`
+	Nickname    string `json:"nickname"`
+	Avatar      string `json:"avatar"`
+	Role        string `json:"role"` // student / admin
+	Campus      string `json:"campus"`
+	CreditScore int    `json:"creditScore"` // 信用评分
 }
 
 // Category 分类
@@ -93,6 +94,15 @@ type Rating struct {
 	CreatedAt  string `json:"createdAt"`
 }
 
+// BrowseRecord 浏览记录
+type BrowseRecord struct {
+	ID        string `json:"id"`
+	UserID    string `json:"userId"`
+	ItemID    string `json:"itemId"`
+	Category  string `json:"category"` // 冗余存储，加速查询
+	CreatedAt string `json:"createdAt"`
+}
+
 // Notification 通知
 type Notification struct {
 	ID        string `json:"id"`
@@ -117,16 +127,17 @@ type AuditLog struct {
 
 // Database JSON 文件存储的完整结构
 type Database struct {
-	Users        []User        `json:"users"`
-	Categories   []Category    `json:"categories"`
-	Items        []Item        `json:"items"`
-	Exchanges    []Exchange    `json:"exchanges"`
-	Messages     []Message     `json:"messages"`
-	Favorites    []Favorite    `json:"favorites"`
-	Reports      []Report      `json:"reports"`
-	Ratings      []Rating      `json:"ratings"`
-	Notifications []Notification `json:"notifications"`
-	AuditLogs    []AuditLog    `json:"auditLogs"`
+	Users          []User          `json:"users"`
+	Categories     []Category      `json:"categories"`
+	Items          []Item          `json:"items"`
+	Exchanges      []Exchange      `json:"exchanges"`
+	Messages       []Message       `json:"messages"`
+	Favorites      []Favorite      `json:"favorites"`
+	Reports        []Report        `json:"reports"`
+	Ratings        []Rating        `json:"ratings"`
+	Notifications  []Notification  `json:"notifications"`
+	AuditLogs      []AuditLog      `json:"auditLogs"`
+	BrowseRecords  []BrowseRecord  `json:"browseRecords"`
 }
 
 // LoginRequest 登录请求

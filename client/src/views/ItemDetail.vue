@@ -104,6 +104,7 @@ async function handleReport() {
     await report({
       type: 'item',
       targetId: item.value._id || item.value.id,
+      targetType: 'item',
       reason: reportReason.value
     })
     appStore.showToast('举报已提交', 'success')

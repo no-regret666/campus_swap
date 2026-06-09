@@ -2,8 +2,11 @@ import http from './index'
 
 export const report = (data) => http.post('/reports', data)
 export const rate = (data) => http.post('/ratings', data)
+export const getRatings = (params) => http.get('/ratings', { params })
 export const getDashboard = () => http.get('/dashboard')
 export const getRecommendations = () => http.get('/recommendations')
 export const getCategories = () => http.get('/categories')
 export const getNotifications = () => http.get('/notifications')
 export const markNotificationRead = (id) => http.patch(`/notifications/${id}/read`)
+export const getReports = () => http.get('/reports')
+export const updateReport = (id, data) => http.patch(`/reports/${id}`, data)

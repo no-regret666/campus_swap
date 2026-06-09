@@ -62,6 +62,10 @@ func GetItems(c *gin.Context) {
 func GetItem(c *gin.Context) {
 	id := c.Param("id")
 
+	// 尝试获取当前用户ID（未登录则为空）
+	userId, _ := c.Get("userId")
+	userIdStr, _ := userId.(string)
+
 	var found *model.Item
 	var ownerName string
 	service.WithWrite(func(d *model.Database) {
@@ -81,6 +85,16 @@ func GetItem(c *gin.Context) {
 					}
 					break
 				}
+			}
+			// 登录用户记录浏览历史
+			if userIdStr != "" {
+				d.BrowseRecords = append(d.BrowseRecords, model.BrowseRecord{
+					ID:        service.GenID("br"),
+					UserID:    userIdStr,
+					ItemID:    id,
+					Category:  found.Category,
+					CreatedAt: model.TimeNow(),
+				})
 			}
 		}
 	})

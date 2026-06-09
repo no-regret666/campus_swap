@@ -44,7 +44,7 @@ async function handleClick(notif) {
   // 跳转到相关页面
   if (notif.type === 'exchange_request' || notif.type === 'exchange_response') {
     router.push('/exchanges')
-  } else if (notif.type === 'message') {
+  } else if (notif.type === 'new_message' || notif.type === 'message') {
     router.push(`/messages/${notif.relatedId}`)
   }
 }

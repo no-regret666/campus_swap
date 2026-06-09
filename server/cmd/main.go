@@ -49,7 +49,7 @@ func main() {
 	items := api.Group("/items")
 	{
 		items.GET("", handler.GetItems)
-		items.GET("/:id", handler.GetItem)
+		items.GET("/:id", middleware.OptionalAuthMiddleware(), handler.GetItem)
 		items.POST("", middleware.AuthMiddleware(), handler.CreateItem)
 		items.PUT("/:id", middleware.AuthMiddleware(), handler.UpdateItem)
 		items.DELETE("/:id", middleware.AuthMiddleware(), handler.DeleteItem)
@@ -72,7 +72,9 @@ func main() {
 		messages.GET("/:exchangeId", handler.GetMessages)
 		messages.POST("", handler.SendMessage)
 		messages.GET("/unread/count", handler.GetUnreadCount)
+		messages.GET("/unread/by-exchange", handler.GetAllUnreadByExchange)
 		messages.POST("/:exchangeId/read", handler.MarkMessagesRead)
+		messages.DELETE("/:id", handler.DeleteMessage)
 	}
 
 	// 收藏路由
@@ -106,6 +108,7 @@ func main() {
 	api.GET("/notifications", middleware.AuthMiddleware(), handler.GetNotifications)
 	api.GET("/notifications/unread-count", middleware.AuthMiddleware(), handler.GetUnreadNotificationCount)
 	api.PATCH("/notifications/:id/read", middleware.AuthMiddleware(), handler.MarkNotificationRead)
+	api.POST("/notifications/read-all", middleware.AuthMiddleware(), handler.MarkAllNotificationsRead)
 
 	// 文件上传（模拟对象存储）
 	api.POST("/upload", middleware.AuthMiddleware(), handler.UploadImage)

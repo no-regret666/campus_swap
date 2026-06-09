@@ -7,7 +7,8 @@
       "nickname": "林可",
       "avatar": "",
       "role": "student",
-      "campus": "主校区"
+      "campus": "主校区",
+      "creditScore": 100
     },
     {
       "id": "u2",
@@ -16,7 +17,8 @@
       "nickname": "周然",
       "avatar": "",
       "role": "student",
-      "campus": "主校区"
+      "campus": "主校区",
+      "creditScore": 95
     },
     {
       "id": "u3",
@@ -25,7 +27,8 @@
       "nickname": "陈舟",
       "avatar": "",
       "role": "student",
-      "campus": "南校区"
+      "campus": "南校区",
+      "creditScore": 88
     },
     {
       "id": "admin",
@@ -34,7 +37,8 @@
       "nickname": "管理员",
       "avatar": "",
       "role": "admin",
-      "campus": "主校区"
+      "campus": "主校区",
+      "creditScore": 100
     }
   ],
   "categories": [
@@ -76,7 +80,7 @@
       "ownerId": "u1",
       "wantExchange": "想换一台Kindle或机械键盘",
       "status": "available",
-      "views": 23,
+      "views": 12,
       "createdAt": "2026-05-01 10:00:00"
     },
     {
@@ -90,7 +94,7 @@
       "ownerId": "u2",
       "wantExchange": "绘画工具或小音箱",
       "status": "available",
-      "views": 10,
+      "views": 8,
       "createdAt": "2026-05-02 14:30:00"
     },
     {
@@ -104,7 +108,7 @@
       "ownerId": "u3",
       "wantExchange": "瑜伽垫或跳绳等运动装备",
       "status": "available",
-      "views": 7,
+      "views": 5,
       "createdAt": "2026-05-03 09:15:00"
     },
     {
@@ -122,18 +126,424 @@
       "createdAt": "2026-05-04 16:00:00"
     },
     {
-      "id": "item_1780812458213_8332",
-      "title": "书本",
-      "description": "闲置书本",
+      "id": "item5",
+      "title": "机械键盘 Cherry红轴",
+      "description": "Cherry MX Board 3.0S，87键，红轴手感好，用了一学期",
+      "images": [],
+      "category": "digital",
+      "campus": "主校区",
+      "condition": "几乎全新",
+      "ownerId": "u1",
+      "wantExchange": "想换Kindle或蓝牙耳机",
+      "status": "available",
+      "views": 18,
+      "createdAt": "2026-05-05 09:20:00"
+    },
+    {
+      "id": "item6",
+      "title": "瑜伽垫 加厚款",
+      "description": "NBR材质10mm加厚，183×61cm，防滑纹理，用了一学期",
+      "images": [],
+      "category": "sport",
+      "campus": "主校区",
+      "condition": "轻微使用",
+      "ownerId": "u1",
+      "wantExchange": "哑铃或拉力带",
+      "status": "available",
+      "views": 6,
+      "createdAt": "2026-05-06 11:00:00"
+    },
+    {
+      "id": "item7",
+      "title": "水彩颜料套装",
+      "description": "马利24色管装水彩，附带调色盘和画笔",
+      "images": [],
+      "category": "art",
+      "campus": "主校区",
+      "condition": "全新",
+      "ownerId": "u1",
+      "wantExchange": "手账素材或彩铅",
+      "status": "available",
+      "views": 10,
+      "createdAt": "2026-05-07 15:30:00"
+    },
+    {
+      "id": "item8",
+      "title": "保温杯 500ml",
+      "description": "316不锈钢内胆，保温12小时，白色",
       "images": [],
       "category": "life",
-      "campus": "南湖校区",
-      "condition": "九成新",
-      "ownerId": "admin",
-      "wantExchange": "",
+      "campus": "主校区",
+      "condition": "几乎全新",
+      "ownerId": "u1",
+      "wantExchange": "雨伞或收纳盒",
       "status": "available",
-      "views": 1,
-      "createdAt": "2026-06-07 14:07:38"
+      "views": 4,
+      "createdAt": "2026-05-08 10:10:00"
+    },
+    {
+      "id": "item9",
+      "title": "Python编程辅导",
+      "description": "Python基础/数据分析/爬虫，可线上或图书馆辅导，每次1.5小时",
+      "images": [],
+      "category": "skill",
+      "campus": "线上",
+      "condition": "",
+      "ownerId": "u1",
+      "wantExchange": "英语口语陪练或PS教学",
+      "status": "available",
+      "views": 22,
+      "createdAt": "2026-05-09 08:45:00"
+    },
+    {
+      "id": "item10",
+      "title": "小米蓝牙耳机",
+      "description": "小米Air2 SE，降噪效果不错，充电盒轻微划痕",
+      "images": [],
+      "category": "digital",
+      "campus": "主校区",
+      "condition": "轻微使用",
+      "ownerId": "u1",
+      "wantExchange": "充电宝或数据线",
+      "status": "available",
+      "views": 15,
+      "createdAt": "2026-05-10 14:00:00"
+    },
+    {
+      "id": "item11",
+      "title": "Kindle Paperwhite 5",
+      "description": "6.8寸300ppi，32G，带官方皮套，屏幕完好",
+      "images": [],
+      "category": "digital",
+      "campus": "主校区",
+      "condition": "几乎全新",
+      "ownerId": "u2",
+      "wantExchange": "iPad或手绘板",
+      "status": "available",
+      "views": 22,
+      "createdAt": "2026-05-02 16:00:00"
+    },
+    {
+      "id": "item12",
+      "title": "吉他入门教学",
+      "description": "民谣吉他零基础教学，可上门或视频，送自编教材",
+      "images": [],
+      "category": "skill",
+      "campus": "主校区",
+      "condition": "",
+      "ownerId": "u2",
+      "wantExchange": "英语四六级辅导",
+      "status": "available",
+      "views": 11,
+      "createdAt": "2026-05-03 10:30:00"
+    },
+    {
+      "id": "item13",
+      "title": "运动背包 40L",
+      "description": "Nike运动双肩包，多隔层设计，防水面料",
+      "images": [],
+      "category": "sport",
+      "campus": "主校区",
+      "condition": "轻微使用",
+      "ownerId": "u2",
+      "wantExchange": "登山杖或运动水壶",
+      "status": "available",
+      "views": 7,
+      "createdAt": "2026-05-05 13:20:00"
+    },
+    {
+      "id": "item14",
+      "title": "手账本套装",
+      "description": "A5活页手账本+彩色笔+贴纸+胶带，未拆封",
+      "images": [],
+      "category": "art",
+      "campus": "主校区",
+      "condition": "全新",
+      "ownerId": "u2",
+      "wantExchange": "水彩或彩铅",
+      "status": "available",
+      "views": 10,
+      "createdAt": "2026-05-06 09:00:00"
+    },
+    {
+      "id": "item15",
+      "title": "电热水壶",
+      "description": "美的1.5L不锈钢电水壶，自动断电，宿舍可用",
+      "images": [],
+      "category": "life",
+      "campus": "主校区",
+      "condition": "轻微使用",
+      "ownerId": "u2",
+      "wantExchange": "台灯或收纳架",
+      "status": "available",
+      "views": 5,
+      "createdAt": "2026-05-07 17:40:00"
+    },
+    {
+      "id": "item16",
+      "title": "Switch 健身环",
+      "description": "含健身环和腿部绑带，卡带版，玩过两周",
+      "images": [],
+      "category": "digital",
+      "campus": "主校区",
+      "condition": "几乎全新",
+      "ownerId": "u2",
+      "wantExchange": "塞尔达卡带或其他Switch游戏",
+      "status": "available",
+      "views": 25,
+      "createdAt": "2026-05-08 11:30:00"
+    },
+    {
+      "id": "item17",
+      "title": "索尼WH-1000XM4",
+      "description": "头戴式降噪耳机，黑色，续航30小时，耳罩轻微磨损",
+      "images": [],
+      "category": "digital",
+      "campus": "南校区",
+      "condition": "轻微使用",
+      "ownerId": "u3",
+      "wantExchange": "AirPods Pro或键盘",
+      "status": "available",
+      "views": 30,
+      "createdAt": "2026-05-01 20:00:00"
+    },
+    {
+      "id": "item18",
+      "title": "画架 折叠款",
+      "description": "铝合金折叠画架，高度可调，适合油画/水彩",
+      "images": [],
+      "category": "art",
+      "campus": "南校区",
+      "condition": "几乎全新",
+      "ownerId": "u3",
+      "wantExchange": "颜料或画布",
+      "status": "available",
+      "views": 6,
+      "createdAt": "2026-05-04 08:30:00"
+    },
+    {
+      "id": "item19",
+      "title": "PS修图教学",
+      "description": "Photoshop从入门到进阶，含人像精修/海报设计",
+      "images": [],
+      "category": "skill",
+      "campus": "线上",
+      "condition": "",
+      "ownerId": "u3",
+      "wantExchange": "编程辅导或摄影教学",
+      "status": "available",
+      "views": 14,
+      "createdAt": "2026-05-05 19:00:00"
+    },
+    {
+      "id": "item20",
+      "title": "跑鞋 Nike Pegasus 40",
+      "description": "42码，黑色，跑了约200km，大底状态好",
+      "images": [],
+      "category": "sport",
+      "campus": "南校区",
+      "condition": "轻微使用",
+      "ownerId": "u3",
+      "wantExchange": "羽毛球拍或网球拍",
+      "status": "available",
+      "views": 9,
+      "createdAt": "2026-05-06 14:15:00"
+    },
+    {
+      "id": "item21",
+      "title": "桌面收纳架",
+      "description": "竹木三层层架，35×25cm，宿舍桌面整理利器",
+      "images": [],
+      "category": "life",
+      "campus": "南校区",
+      "condition": "几乎全新",
+      "ownerId": "u3",
+      "wantExchange": "台灯或挂钟",
+      "status": "available",
+      "views": 3,
+      "createdAt": "2026-05-07 10:00:00"
+    },
+    {
+      "id": "item22",
+      "title": "小米充电宝 20000mAh",
+      "description": "双USB输出，支持18W快充，白色",
+      "images": [],
+      "category": "digital",
+      "campus": "南校区",
+      "condition": "几乎全新",
+      "ownerId": "u3",
+      "wantExchange": "蓝牙耳机或数据线",
+      "status": "available",
+      "views": 11,
+      "createdAt": "2026-05-08 16:45:00"
+    },
+    {
+      "id": "item23",
+      "title": "飞利浦电动牙刷",
+      "description": "HX6730声波电动牙刷，含两个刷头",
+      "images": [],
+      "category": "life",
+      "campus": "主校区",
+      "condition": "轻微使用",
+      "ownerId": "u1",
+      "wantExchange": "收纳用品或台灯",
+      "status": "available",
+      "views": 7,
+      "createdAt": "2026-05-11 09:00:00"
+    },
+    {
+      "id": "item24",
+      "title": "Wacom手绘板",
+      "description": "CTL-472，适合入门板绘，附带压感笔",
+      "images": [],
+      "category": "digital",
+      "campus": "主校区",
+      "condition": "几乎全新",
+      "ownerId": "u2",
+      "wantExchange": "Kindle或iPad配件",
+      "status": "available",
+      "views": 16,
+      "createdAt": "2026-05-11 10:30:00"
+    },
+    {
+      "id": "item25",
+      "title": "羽毛球拍 尤尼克斯",
+      "description": "ARC-5i，4U/G5，含球拍袋，线尚好",
+      "images": [],
+      "category": "sport",
+      "campus": "南校区",
+      "condition": "轻微使用",
+      "ownerId": "u3",
+      "wantExchange": "跑鞋或瑜伽垫",
+      "status": "available",
+      "views": 8,
+      "createdAt": "2026-05-11 11:00:00"
+    },
+    {
+      "id": "item26",
+      "title": "彩铅48色套装",
+      "description": "辉柏嘉水溶性彩铅，铁盒装，未使用过",
+      "images": [],
+      "category": "art",
+      "campus": "主校区",
+      "condition": "全新",
+      "ownerId": "u1",
+      "wantExchange": "手账素材或水彩",
+      "status": "available",
+      "views": 12,
+      "createdAt": "2026-05-12 08:20:00"
+    },
+    {
+      "id": "item27",
+      "title": "摄影入门教学",
+      "description": "单反/微单相机基础+构图+后期，可周末约拍",
+      "images": [],
+      "category": "skill",
+      "campus": "南校区",
+      "condition": "",
+      "ownerId": "u3",
+      "wantExchange": "PS教学或编程辅导",
+      "status": "available",
+      "views": 19,
+      "createdAt": "2026-05-12 13:00:00"
+    },
+    {
+      "id": "item28",
+      "title": "折叠书桌",
+      "description": "80×40cm白色折叠桌，适合宿舍，承重50kg",
+      "images": [],
+      "category": "life",
+      "campus": "主校区",
+      "condition": "几乎全新",
+      "ownerId": "u2",
+      "wantExchange": "收纳架或椅子",
+      "status": "available",
+      "views": 5,
+      "createdAt": "2026-05-12 15:30:00"
+    },
+    {
+      "id": "item29",
+      "title": "罗技G304鼠标",
+      "description": "无线游戏鼠标，LIGHTSPEED技术，5号电池供电",
+      "images": [],
+      "category": "digital",
+      "campus": "南校区",
+      "condition": "几乎全新",
+      "ownerId": "u3",
+      "wantExchange": "机械键盘或耳机",
+      "status": "available",
+      "views": 13,
+      "createdAt": "2026-05-13 09:45:00"
+    },
+    {
+      "id": "item30",
+      "title": "英语四级辅导",
+      "description": "系统备考+真题讲解+作文批改，线上为主",
+      "images": [],
+      "category": "skill",
+      "campus": "线上",
+      "condition": "",
+      "ownerId": "u2",
+      "wantExchange": "吉他教学或绘画教学",
+      "status": "available",
+      "views": 17,
+      "createdAt": "2026-05-13 14:00:00"
+    },
+    {
+      "id": "item31",
+      "title": "跳绳 钢丝绳",
+      "description": "竞速钢丝跳绳，轴承顺滑，适合减脂和体能训练",
+      "images": [],
+      "category": "sport",
+      "campus": "主校区",
+      "condition": "全新",
+      "ownerId": "u1",
+      "wantExchange": "瑜伽垫或拉力器",
+      "status": "available",
+      "views": 4,
+      "createdAt": "2026-05-14 10:00:00"
+    },
+    {
+      "id": "item32",
+      "title": "复古胶片相机",
+      "description": "柯尼卡C35，旁轴胶片机，40mm f2.8镜头，测光正常",
+      "images": [],
+      "category": "digital",
+      "campus": "南校区",
+      "condition": "轻微使用",
+      "ownerId": "u3",
+      "wantExchange": "拍立得或单反镜头",
+      "status": "available",
+      "views": 21,
+      "createdAt": "2026-05-14 16:00:00"
+    },
+    {
+      "id": "item33",
+      "title": "加湿器 300ml",
+      "description": "超声波雾化加湿器，静音设计，宿舍冬季必备",
+      "images": [],
+      "category": "life",
+      "campus": "南校区",
+      "condition": "几乎全新",
+      "ownerId": "u2",
+      "wantExchange": "电热水壶或台灯",
+      "status": "available",
+      "views": 6,
+      "createdAt": "2026-05-15 09:30:00"
+    },
+    {
+      "id": "item34",
+      "title": "口琴 C调十孔",
+      "description": "和来Special 20，C调，适合初学蓝调口琴",
+      "images": [],
+      "category": "art",
+      "campus": "南校区",
+      "condition": "几乎全新",
+      "ownerId": "u3",
+      "wantExchange": "吉他配件或乐谱",
+      "status": "available",
+      "views": 5,
+      "createdAt": "2026-05-15 11:00:00"
     }
   ],
   "exchanges": [
@@ -151,30 +561,56 @@
       "updatedAt": "2026-05-10 08:00:00"
     },
     {
-      "id": "ex_1780812477738_9336",
-      "itemId": "item2",
-      "requesterId": "admin",
-      "ownerId": "u2",
-      "offerDesc": "",
-      "message": "",
-      "meetTime": "",
-      "meetPlace": "",
-      "status": "pending",
-      "createdAt": "2026-06-07 14:07:57",
-      "updatedAt": "2026-06-07 14:07:57"
+      "id": "ex2",
+      "itemId": "item17",
+      "requesterId": "u1",
+      "ownerId": "u3",
+      "offerDesc": "我可以用机械键盘来换",
+      "message": "索尼耳机还在吗？",
+      "meetTime": "周六 14:00",
+      "meetPlace": "图书馆门口",
+      "status": "accepted",
+      "createdAt": "2026-05-08 10:00:00",
+      "updatedAt": "2026-05-09 09:00:00"
     },
     {
-      "id": "ex_1780913433376_9370",
-      "itemId": "item1",
-      "requesterId": "u2",
-      "ownerId": "u1",
-      "offerDesc": "",
-      "message": "2",
+      "id": "ex3",
+      "itemId": "item11",
+      "requesterId": "u3",
+      "ownerId": "u2",
+      "offerDesc": "我可以用索尼耳机来换",
+      "message": "想换Kindle很久了",
       "meetTime": "",
       "meetPlace": "",
-      "status": "pending",
-      "createdAt": "2026-06-08 18:10:33",
-      "updatedAt": "2026-06-08 18:10:33"
+      "status": "completed",
+      "createdAt": "2026-05-03 10:00:00",
+      "updatedAt": "2026-05-05 16:00:00"
+    },
+    {
+      "id": "ex4",
+      "itemId": "item9",
+      "requesterId": "u3",
+      "ownerId": "u1",
+      "offerDesc": "我可以用摄影教学来换",
+      "message": "我想学Python",
+      "meetTime": "",
+      "meetPlace": "",
+      "status": "completed",
+      "createdAt": "2026-05-09 10:00:00",
+      "updatedAt": "2026-05-12 18:00:00"
+    },
+    {
+      "id": "ex5",
+      "itemId": "item16",
+      "requesterId": "u1",
+      "ownerId": "u2",
+      "offerDesc": "我可以用蓝牙耳机来换",
+      "message": "健身环看着很有趣",
+      "meetTime": "",
+      "meetPlace": "",
+      "status": "rejected",
+      "createdAt": "2026-05-08 12:00:00",
+      "updatedAt": "2026-05-08 15:00:00"
     }
   ],
   "messages": [
@@ -184,7 +620,7 @@
       "senderId": "u2",
       "content": "你好，iPad还在吗？我想用尤克里里交换",
       "images": null,
-      "isRead": false,
+      "isRead": true,
       "isDeleted": false,
       "createdAt": "2026-05-10 08:00:00"
     },
@@ -194,97 +630,297 @@
       "senderId": "u1",
       "content": "在的，你的尤克里里是什么牌子？",
       "images": null,
-      "isRead": true,
+      "isRead": false,
       "isDeleted": false,
       "createdAt": "2026-05-10 08:30:00"
     },
     {
-      "id": "msg_1780913195049_5542",
-      "exchangeId": "ex1",
-      "senderId": "u2",
-      "content": "111111",
-      "images": [
-        "/uploads/1780913195036722000_微信图片_20260608120105_41_186.png",
-        "/uploads/1780913195044221000_微信图片_20260608155857_44_186.png"
-      ],
-      "isRead": false,
-      "isDeleted": false,
-      "createdAt": "2026-06-08 18:06:35"
-    },
-    {
-      "id": "msg_1780913441787_9916",
-      "exchangeId": "ex_1780812477738_9336",
-      "senderId": "u2",
-      "content": "你好",
+      "id": "msg3",
+      "exchangeId": "ex2",
+      "senderId": "u1",
+      "content": "索尼耳机还在吗？我想用机械键盘换",
       "images": null,
       "isRead": false,
       "isDeleted": false,
-      "createdAt": "2026-06-08 18:10:41"
+      "createdAt": "2026-05-08 10:00:00"
     },
     {
-      "id": "msg_1780913451451_9128",
-      "exchangeId": "ex_1780812477738_9336",
-      "senderId": "u2",
-      "content": "2",
-      "images": [
-        "/uploads/1780913451441370000_微信图片_20260608120105_41_186.png",
-        "/uploads/1780913451447143000_微信图片_20260608155857_44_186.png"
-      ],
-      "isRead": false,
-      "isDeleted": false,
-      "createdAt": "2026-06-08 18:10:51"
-    },
-    {
-      "id": "msg_1780913524116_7967",
-      "exchangeId": "ex1",
-      "senderId": "u2",
-      "content": "1111",
-      "images": [
-        "/uploads/1780913524104591000_微信图片_20260608120105_41_186.png",
-        "/uploads/1780913524111734000_微信图片_20260608155857_44_186.png"
-      ],
-      "isRead": false,
-      "isDeleted": false,
-      "createdAt": "2026-06-08 18:12:04"
-    },
-    {
-      "id": "msg_1780913580905_1303",
-      "exchangeId": "ex_1780913433376_9370",
-      "senderId": "u2",
-      "content": "222",
-      "images": [
-        "/uploads/1780913580892572000_微信图片_20260608120105_41_186.png",
-        "/uploads/1780913580900060000_微信图片_20260608155857_44_186.png"
-      ],
-      "isRead": false,
-      "isDeleted": false,
-      "createdAt": "2026-06-08 18:13:00"
-    },
-    {
-      "id": "msg_1780913818795_7695",
-      "exchangeId": "ex_1780913433376_9370",
-      "senderId": "u2",
-      "content": "1111",
+      "id": "msg4",
+      "exchangeId": "ex2",
+      "senderId": "u3",
+      "content": "在的，红轴还是青轴？",
       "images": null,
       "isRead": false,
       "isDeleted": false,
-      "createdAt": "2026-06-08 18:16:58"
+      "createdAt": "2026-05-08 10:15:00"
+    },
+    {
+      "id": "msg5",
+      "exchangeId": "ex2",
+      "senderId": "u1",
+      "content": "红轴，手感很舒服。周六图书馆门口见面？",
+      "images": null,
+      "isRead": false,
+      "isDeleted": false,
+      "createdAt": "2026-05-08 10:20:00"
+    },
+    {
+      "id": "msg6",
+      "exchangeId": "ex2",
+      "senderId": "u3",
+      "content": "好的，周六14点见",
+      "images": null,
+      "isRead": false,
+      "isDeleted": false,
+      "createdAt": "2026-05-08 10:25:00"
+    },
+    {
+      "id": "msg_1781002181766_0813",
+      "exchangeId": "ex4",
+      "senderId": "u3",
+      "content": "hi",
+      "images": null,
+      "isRead": true,
+      "isDeleted": false,
+      "createdAt": "2026-06-09 18:49:41"
     }
   ],
-  "favorites": [],
+  "favorites": [
+    {
+      "id": "fav1",
+      "userId": "u1",
+      "itemId": "item11",
+      "createdAt": "2026-05-02 17:00:00"
+    },
+    {
+      "id": "fav2",
+      "userId": "u1",
+      "itemId": "item17",
+      "createdAt": "2026-05-01 21:00:00"
+    },
+    {
+      "id": "fav3",
+      "userId": "u1",
+      "itemId": "item16",
+      "createdAt": "2026-05-08 12:00:00"
+    },
+    {
+      "id": "fav4",
+      "userId": "u2",
+      "itemId": "item5",
+      "createdAt": "2026-05-05 10:00:00"
+    },
+    {
+      "id": "fav5",
+      "userId": "u2",
+      "itemId": "item24",
+      "createdAt": "2026-05-11 11:00:00"
+    },
+    {
+      "id": "fav6",
+      "userId": "u3",
+      "itemId": "item10",
+      "createdAt": "2026-05-10 15:00:00"
+    },
+    {
+      "id": "fav7",
+      "userId": "u3",
+      "itemId": "item26",
+      "createdAt": "2026-05-12 09:00:00"
+    }
+  ],
   "reports": [],
-  "ratings": [],
+  "ratings": [
+    {
+      "id": "rat1",
+      "exchangeId": "ex3",
+      "fromUserId": "u3",
+      "toUserId": "u2",
+      "score": 5,
+      "comment": "Kindle状态很好，交易很顺利",
+      "createdAt": "2026-05-05 16:30:00"
+    },
+    {
+      "id": "rat2",
+      "exchangeId": "ex3",
+      "fromUserId": "u2",
+      "toUserId": "u3",
+      "score": 4,
+      "comment": "耳机降噪效果不错，就是有点磨损",
+      "createdAt": "2026-05-05 16:35:00"
+    },
+    {
+      "id": "rat3",
+      "exchangeId": "ex4",
+      "fromUserId": "u3",
+      "toUserId": "u1",
+      "score": 5,
+      "comment": "Python讲得很清晰，很有耐心",
+      "createdAt": "2026-05-12 18:30:00"
+    },
+    {
+      "id": "rat4",
+      "exchangeId": "ex4",
+      "fromUserId": "u1",
+      "toUserId": "u3",
+      "score": 4,
+      "comment": "摄影教学实用，构图部分讲得好",
+      "createdAt": "2026-05-12 18:35:00"
+    }
+  ],
   "notifications": [
     {
-      "id": "notif_1780913433376_7115",
+      "id": "ntf_1781002181766_9702",
       "userId": "u1",
-      "type": "exchange_request",
-      "title": "新的交换申请",
-      "content": "周然 想用 '' 交换你的 'iPad Air 5'",
+      "type": "new_message",
+      "title": "收到新消息",
+      "content": "你有一条新的交换沟通消息",
       "isRead": false,
-      "relatedId": "ex_1780913433376_9370",
-      "createdAt": "2026-06-08 18:10:33"
+      "relatedId": "ex4",
+      "createdAt": "2026-06-09 18:49:41"
     }
   ],
-  "auditLogs": null
+  "auditLogs": null,
+  "browseRecords": [
+    {
+      "id": "br1",
+      "userId": "u1",
+      "itemId": "item2",
+      "category": "art",
+      "createdAt": "2026-05-05 10:00:00"
+    },
+    {
+      "id": "br2",
+      "userId": "u1",
+      "itemId": "item3",
+      "category": "sport",
+      "createdAt": "2026-05-06 14:00:00"
+    },
+    {
+      "id": "br3",
+      "userId": "u1",
+      "itemId": "item17",
+      "category": "digital",
+      "createdAt": "2026-05-01 20:30:00"
+    },
+    {
+      "id": "br4",
+      "userId": "u1",
+      "itemId": "item11",
+      "category": "digital",
+      "createdAt": "2026-05-02 17:10:00"
+    },
+    {
+      "id": "br5",
+      "userId": "u1",
+      "itemId": "item16",
+      "category": "digital",
+      "createdAt": "2026-05-08 12:05:00"
+    },
+    {
+      "id": "br6",
+      "userId": "u1",
+      "itemId": "item24",
+      "category": "digital",
+      "createdAt": "2026-05-11 10:45:00"
+    },
+    {
+      "id": "br7",
+      "userId": "u1",
+      "itemId": "item12",
+      "category": "skill",
+      "createdAt": "2026-05-03 11:00:00"
+    },
+    {
+      "id": "br8",
+      "userId": "u2",
+      "itemId": "item4",
+      "category": "life",
+      "createdAt": "2026-05-07 09:00:00"
+    },
+    {
+      "id": "br9",
+      "userId": "u2",
+      "itemId": "item1",
+      "category": "digital",
+      "createdAt": "2026-05-08 11:00:00"
+    },
+    {
+      "id": "br10",
+      "userId": "u2",
+      "itemId": "item5",
+      "category": "digital",
+      "createdAt": "2026-05-05 09:30:00"
+    },
+    {
+      "id": "br11",
+      "userId": "u2",
+      "itemId": "item24",
+      "category": "digital",
+      "createdAt": "2026-05-11 11:00:00"
+    },
+    {
+      "id": "br12",
+      "userId": "u2",
+      "itemId": "item9",
+      "category": "skill",
+      "createdAt": "2026-05-09 09:00:00"
+    },
+    {
+      "id": "br13",
+      "userId": "u3",
+      "itemId": "item1",
+      "category": "digital",
+      "createdAt": "2026-05-09 16:00:00"
+    },
+    {
+      "id": "br14",
+      "userId": "u3",
+      "itemId": "item5",
+      "category": "digital",
+      "createdAt": "2026-05-05 09:30:00"
+    },
+    {
+      "id": "br15",
+      "userId": "u3",
+      "itemId": "item10",
+      "category": "digital",
+      "createdAt": "2026-05-10 14:10:00"
+    },
+    {
+      "id": "br16",
+      "userId": "u3",
+      "itemId": "item26",
+      "category": "art",
+      "createdAt": "2026-05-12 08:30:00"
+    },
+    {
+      "id": "br17",
+      "userId": "u3",
+      "itemId": "item19",
+      "category": "skill",
+      "createdAt": "2026-05-05 19:10:00"
+    },
+    {
+      "id": "br_1781001750147_8569",
+      "userId": "u1",
+      "itemId": "item7",
+      "category": "art",
+      "createdAt": "2026-06-09 18:42:30"
+    },
+    {
+      "id": "br_1781001831749_4560",
+      "userId": "u1",
+      "itemId": "item11",
+      "category": "digital",
+      "createdAt": "2026-06-09 18:43:51"
+    },
+    {
+      "id": "br_1781001859484_4810",
+      "userId": "u1",
+      "itemId": "item11",
+      "category": "digital",
+      "createdAt": "2026-06-09 18:44:19"
+    }
+  ]
 }

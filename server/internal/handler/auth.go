@@ -15,12 +15,13 @@ import (
 // SafeUser 返回不含密码的用户信息
 func SafeUser(u model.User) gin.H {
 	return gin.H{
-		"id":       u.ID,
-		"username": u.Username,
-		"nickname": u.Nickname,
-		"avatar":   u.Avatar,
-		"role":     u.Role,
-		"campus":   u.Campus,
+		"id":          u.ID,
+		"username":    u.Username,
+		"nickname":    u.Nickname,
+		"avatar":      u.Avatar,
+		"role":        u.Role,
+		"campus":      u.Campus,
+		"creditScore": u.CreditScore,
 	}
 }
 
@@ -94,13 +95,14 @@ func Register(c *gin.Context) {
 	}
 
 	newUser := model.User{
-		ID:       service.GenID("u"),
-		Username: req.Username,
-		Password: req.Password,
-		Nickname: req.Nickname,
-		Avatar:   "",
-		Role:     "student",
-		Campus:   req.Campus,
+		ID:          service.GenID("u"),
+		Username:    req.Username,
+		Password:    req.Password,
+		Nickname:    req.Nickname,
+		Avatar:      "",
+		Role:        "student",
+		Campus:      req.Campus,
+		CreditScore: 100,
 	}
 
 	service.WithWrite(func(d *model.Database) {

@@ -11,8 +11,7 @@ const routes = [
   { path: '/notifications', name: 'Notifications', component: () => import('../views/Notifications.vue'), meta: { auth: true } },
   { path: '/favorites', name: 'Favorites', component: () => import('../views/Favorites.vue'), meta: { auth: true } },
   { path: '/profile', name: 'Profile', component: () => import('../views/Profile.vue'), meta: { auth: true } },
-  { path: '/admin', name: 'Admin', component: () => import('../views/Admin.vue'), meta: { auth: true } },
-  { path: '/recommendations', name: 'Recommend', component: () => import('../views/Recommend.vue') }
+  { path: '/admin', name: 'Admin', component: () => import('../views/Admin.vue'), meta: { auth: true } }
 ]
 
 const router = createRouter({
