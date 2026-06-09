@@ -1,78 +1,48 @@
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../stores/user'
 import { useAppStore } from '../stores/app'
-import { markNotificationRead } from '../api/misc'
+import { getUnreadCount, getAllUnreadByExchange } from '../api/messages'
+import { getUnreadNotificationCount } from '../api/notifications'
 
 const userStore = useUserStore()
 const appStore = useAppStore()
 const router = useRouter()
 const mobileMenuOpen = ref(false)
-const showNotifPanel = ref(false)
+const unreadCount = ref(0)
+const notifCount = ref(0)
 
-// 登录后自动加载通知
+// 获取未读消息数和通知数
 onMounted(() => {
   if (userStore.isLoggedIn) {
-    appStore.fetchNotifications()
+    loadUnreadCounts()
   }
 })
 
-watch(() => userStore.isLoggedIn, (val) => {
-  if (val) appStore.fetchNotifications()
-})
-
-const unreadCount = computed(() => {
-  return appStore.notifications.filter(n => !n.isRead).length
-})
-
-function handleLogout() {
-  userStore.logout()
-}
-
-async function markRead(notif) {
-  if (notif.isRead) return
+async function loadUnreadCounts() {
   try {
-    await markNotificationRead(notif.id)
-    notif.isRead = true
+    const [msgRes, notifRes] = await Promise.all([
+      getUnreadCount(),
+      getUnreadNotificationCount().catch(() => ({ unreadCount: 0 }))
+    ])
+    unreadCount.value = msgRes.unreadCount || 0
+    notifCount.value = notifRes.unreadCount || 0
   } catch (e) {
     // ignore
   }
 }
 
-async function clickNotif(notif) {
-  await markRead(notif)
-  showNotifPanel.value = false
-  // 根据类型跳转
-  if (notif.type === 'exchange_created' || notif.type === 'exchange_status') {
-    router.push('/exchanges')
-  } else if (notif.type === 'new_message' && notif.relatedId) {
-    router.push(`/messages/${notif.relatedId}`)
-  }
+function handleLogout() {
+  userStore.logout()
 }
 
-async function markAllRead() {
-  for (const n of appStore.notifications) {
-    if (!n.isRead) {
-      await markRead(n)
-    }
+// 刷新未读数（当从其他页面返回时）
+router.afterEach(() => {
+  if (userStore.isLoggedIn) {
+    loadUnreadCounts()
   }
-}
-
-function formatNotifTime(timeStr) {
-  if (!timeStr) return ''
-  try {
-    const d = new Date(timeStr)
-    const now = new Date()
-    const diff = now - d
-    if (diff < 60000) return '刚刚'
-    if (diff < 3600000) return Math.floor(diff / 60000) + '分钟前'
-    if (diff < 86400000) return Math.floor(diff / 3600000) + '小时前'
-    return d.toLocaleDateString()
-  } catch {
-    return timeStr
-  }
-}
+})
 </script>
 
 <template>
@@ -92,41 +62,14 @@ function formatNotifTime(timeStr) {
         <router-link to="/recommendations" class="nav-link">推荐</router-link>
         <template v-if="userStore.isLoggedIn">
           <router-link to="/publish" class="nav-link">发布</router-link>
-          <router-link to="/exchanges" class="nav-link">交换</router-link>
+          <router-link to="/exchanges" class="nav-link">
+            交换<span v-if="unreadCount" class="badge">{{ unreadCount > 99 ? '99+' : unreadCount }}</span>
+          </router-link>
+          <router-link to="/notifications" class="nav-link nav-icon-link">
+            🔔<span v-if="notifCount" class="badge">{{ notifCount > 99 ? '99+' : notifCount }}</span>
+          </router-link>
           <router-link to="/favorites" class="nav-link">收藏</router-link>
           <router-link to="/admin" class="nav-link" v-if="userStore.isAdmin">后台</router-link>
-
-          <!-- 通知铃铛 -->
-          <div class="notif-wrapper" v-if="userStore.isLoggedIn">
-            <button class="nav-link notif-btn" @click.stop="showNotifPanel = !showNotifPanel">
-              🔔
-              <span v-if="unreadCount" class="notif-badge">{{ unreadCount > 99 ? '99+' : unreadCount }}</span>
-            </button>
-            <div v-if="showNotifPanel" class="notif-panel" @click.stop>
-              <div class="notif-header">
-                <span>通知</span>
-                <button v-if="unreadCount" class="notif-mark-all" @click="markAllRead">全部已读</button>
-              </div>
-              <div class="notif-list">
-                <div v-if="!appStore.notifications.length" class="notif-empty">暂无通知</div>
-                <div
-                  v-for="n in [...appStore.notifications].reverse().slice(0, 20)"
-                  :key="n.id"
-                  class="notif-item"
-                  :class="{ unread: !n.isRead }"
-                  @click="clickNotif(n)"
-                >
-                  <div class="notif-dot" v-if="!n.isRead"></div>
-                  <div class="notif-content">
-                    <div class="notif-title">{{ n.title }}</div>
-                    <div class="notif-desc">{{ n.content }}</div>
-                    <div class="notif-time">{{ formatNotifTime(n.createdAt) }}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <router-link to="/profile" class="nav-link nav-user">
             <span class="user-avatar">{{ userStore.user?.name?.[0] || '我' }}</span>
             <span>{{ userStore.user?.name || '个人中心' }}</span>
@@ -139,9 +82,6 @@ function formatNotifTime(timeStr) {
       </nav>
     </div>
   </header>
-
-  <!-- 点击其他区域关闭通知面板 -->
-  <div v-if="showNotifPanel" class="notif-overlay" @click="showNotifPanel = false"></div>
 </template>
 
 <style scoped>
@@ -192,12 +132,33 @@ function formatNotifTime(timeStr) {
   color: var(--gray-600);
   transition: all 0.2s;
   background: none;
+  position: relative;
 }
 
 .nav-link:hover,
 .nav-link.router-link-active {
   color: var(--primary);
   background: var(--primary-light);
+}
+
+.nav-icon-link {
+  font-size: 16px;
+}
+
+.badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  background: var(--danger);
+  color: white;
+  border-radius: 8px;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .nav-user {
@@ -238,143 +199,6 @@ function formatNotifTime(timeStr) {
   color: var(--danger);
 }
 
-/* 通知铃铛 */
-.notif-wrapper {
-  position: relative;
-}
-
-.notif-btn {
-  position: relative;
-  font-size: 16px;
-  padding: 8px 10px;
-}
-
-.notif-badge {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  min-width: 16px;
-  height: 16px;
-  line-height: 16px;
-  font-size: 10px;
-  font-weight: 700;
-  background: #e53935;
-  color: white;
-  border-radius: 8px;
-  text-align: center;
-  padding: 0 4px;
-}
-
-.notif-panel {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  width: 340px;
-  max-height: 420px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-  border: 1px solid var(--gray-200);
-  overflow: hidden;
-  z-index: 2000;
-}
-
-.notif-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 16px 10px;
-  font-weight: 600;
-  font-size: 15px;
-  color: var(--gray-800);
-  border-bottom: 1px solid var(--gray-100);
-}
-
-.notif-mark-all {
-  background: none;
-  border: none;
-  color: var(--primary);
-  font-size: 13px;
-  cursor: pointer;
-  padding: 2px 6px;
-}
-
-.notif-mark-all:hover {
-  text-decoration: underline;
-}
-
-.notif-list {
-  max-height: 350px;
-  overflow-y: auto;
-}
-
-.notif-empty {
-  padding: 32px 16px;
-  text-align: center;
-  color: var(--gray-400);
-  font-size: 14px;
-}
-
-.notif-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 12px 16px;
-  cursor: pointer;
-  transition: background 0.15s;
-  border-bottom: 1px solid var(--gray-50);
-}
-
-.notif-item:hover {
-  background: var(--gray-50);
-}
-
-.notif-item.unread {
-  background: #f0f7ff;
-}
-
-.notif-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--primary);
-  flex-shrink: 0;
-  margin-top: 6px;
-}
-
-.notif-content {
-  flex: 1;
-  min-width: 0;
-}
-
-.notif-title {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--gray-800);
-  margin-bottom: 2px;
-}
-
-.notif-desc {
-  font-size: 12px;
-  color: var(--gray-500);
-  margin-bottom: 4px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.notif-time {
-  font-size: 11px;
-  color: var(--gray-400);
-}
-
-.notif-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 999;
-}
-
-/* 移动端 */
 .mobile-toggle {
   display: none;
   flex-direction: column;
@@ -420,10 +244,6 @@ function formatNotifTime(timeStr) {
   .nav-link {
     width: 100%;
     padding: 12px 14px;
-  }
-  .notif-panel {
-    width: 300px;
-    right: -40px;
   }
 }
 </style>

@@ -8,10 +8,11 @@ const routes = [
   { path: '/publish', name: 'Publish', component: () => import('../views/Publish.vue'), meta: { auth: true } },
   { path: '/exchanges', name: 'Exchanges', component: () => import('../views/Exchanges.vue'), meta: { auth: true } },
   { path: '/messages/:exchangeId', name: 'Messages', component: () => import('../views/Messages.vue'), meta: { auth: true } },
+  { path: '/notifications', name: 'Notifications', component: () => import('../views/Notifications.vue'), meta: { auth: true } },
   { path: '/favorites', name: 'Favorites', component: () => import('../views/Favorites.vue'), meta: { auth: true } },
   { path: '/profile', name: 'Profile', component: () => import('../views/Profile.vue'), meta: { auth: true } },
-  { path: '/admin', name: 'Admin', component: () => import('../views/Admin.vue'), meta: { auth: true, admin: true } },
-  { path: '/recommendations', name: 'Recommend', component: () => import('../views/Recommend.vue'), meta: { auth: true } }
+  { path: '/admin', name: 'Admin', component: () => import('../views/Admin.vue'), meta: { auth: true } },
+  { path: '/recommendations', name: 'Recommend', component: () => import('../views/Recommend.vue') }
 ]
 
 const router = createRouter({
@@ -23,8 +24,6 @@ router.beforeEach((to, from, next) => {
   const userStore = useUserStore()
   if (to.meta.auth && !userStore.isLoggedIn) {
     next('/login')
-  } else if (to.meta.admin && !userStore.isAdmin) {
-    next('/')
   } else if (to.meta.guest && userStore.isLoggedIn) {
     next('/')
   } else {

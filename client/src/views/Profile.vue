@@ -6,6 +6,7 @@ import { getRatings } from '../api/misc'
 import { useUserStore } from '../stores/user'
 import { useAppStore } from '../stores/app'
 import ItemCard from '../components/ItemCard.vue'
+import BackButton from '../components/BackButton.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -84,6 +85,7 @@ function formatRatingTime(timeStr) {
 
 <template>
   <div class="container">
+    <BackButton />
     <h1 class="page-title">个人中心</h1>
 
     <!-- 用户信息 -->

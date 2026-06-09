@@ -44,6 +44,8 @@ type Exchange struct {
 	OwnerID     string `json:"ownerId"`
 	OfferDesc   string `json:"offerDesc"` // 申请人提供的交换物描述
 	Message     string `json:"message"`
+	MeetTime    string `json:"meetTime"` // 约定见面时间
+	MeetPlace   string `json:"meetPlace"` // 约定见面地点
 	Status      string `json:"status"` // pending / accepted / rejected / completed / cancelled
 	CreatedAt   string `json:"createdAt"`
 	UpdatedAt   string `json:"updatedAt"`
@@ -55,7 +57,10 @@ type Message struct {
 	ExchangeID string `json:"exchangeId"`
 	SenderID   string `json:"senderId"`
 	Content    string `json:"content"`
-	CreatedAt  string `json:"createdAt"`
+	Images     []string `json:"images"`
+	IsRead     bool    `json:"isRead"`
+	IsDeleted  bool    `json:"isDeleted"`
+	CreatedAt  string  `json:"createdAt"`
 }
 
 // Favorite 收藏

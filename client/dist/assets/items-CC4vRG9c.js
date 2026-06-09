@@ -1,0 +1,1 @@
+import{B as e}from"./index-Dh2l9V34.js";const a=t=>e.get("/items",{params:t}),o=t=>e.get(`/items/${t}`),c=t=>e.post("/items",t),i=(t,s)=>e.put(`/items/${t}`,s),p=t=>e.delete(`/items/${t}`);export{o as a,c,p as d,a as g,i as u};

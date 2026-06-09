@@ -8,6 +8,7 @@ import { addFavorite, removeFavorite } from '../api/favorites'
 import { report } from '../api/misc'
 import { useUserStore } from '../stores/user'
 import { useAppStore } from '../stores/app'
+import BackButton from '../components/BackButton.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -180,6 +181,7 @@ async function handleDelete() {
 
 <template>
   <div class="container">
+    <BackButton />
     <div v-if="loading" class="empty-state">加载中...</div>
 
     <div v-else-if="item" class="detail-page">
