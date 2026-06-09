@@ -136,6 +136,16 @@ func CreateExchange(c *gin.Context) {
 
 	service.WithWrite(func(d *model.Database) {
 		d.Exchanges = append(d.Exchanges, newExchange)
+		// 通知物品所有者：有人申请交换
+		d.Notifications = append(d.Notifications, model.Notification{
+			ID:        service.GenID("ntf"),
+			UserID:    ownerID,
+			Type:      "exchange_created",
+			Title:     "收到交换申请",
+			Content:   "有人想交换你的物品，快去看看吧",
+			RelatedID: newExchange.ID,
+			CreatedAt: model.TimeNow(),
+		})
 	})
 
 	c.JSON(http.StatusOK, gin.H{
@@ -188,6 +198,30 @@ func UpdateExchange(c *gin.Context) {
 
 				exchange = d.Exchanges[i]
 				found = true
+
+				// 通知对方：交换状态变更
+				notifyUserId := d.Exchanges[i].OwnerID
+				if userId == d.Exchanges[i].OwnerID {
+					notifyUserId = d.Exchanges[i].RequesterID
+				}
+				statusMap := map[string]string{
+					"accepted":  "交换申请已被接受",
+					"rejected":  "交换申请已被拒绝",
+					"completed": "交换已完成",
+					"cancelled": "交换已取消",
+				}
+				if desc, ok := statusMap[req.Status]; ok {
+					d.Notifications = append(d.Notifications, model.Notification{
+						ID:        service.GenID("ntf"),
+						UserID:    notifyUserId,
+						Type:      "exchange_status",
+						Title:     desc,
+						Content:   desc,
+						RelatedID: d.Exchanges[i].ID,
+						CreatedAt: model.TimeNow(),
+					})
+				}
+
 				break
 			}
 		}

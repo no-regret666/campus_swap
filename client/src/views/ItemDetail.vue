@@ -101,7 +101,7 @@ async function handleReport() {
   }
   try {
     await report({
-      targetType: 'item',
+      type: 'item',
       targetId: item.value._id || item.value.id,
       reason: reportReason.value
     })

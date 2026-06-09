@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getItems, deleteItem } from '../api/items'
+import { getRatings } from '../api/misc'
 import { useUserStore } from '../stores/user'
 import { useAppStore } from '../stores/app'
 import ItemCard from '../components/ItemCard.vue'
@@ -12,10 +13,15 @@ const appStore = useAppStore()
 
 const myItems = ref([])
 const loading = ref(false)
+const ratings = ref([])
+const avgScore = ref(0)
+const ratingCount = ref(0)
+const ratingsLoading = ref(false)
 
 onMounted(async () => {
   if (!userStore.user) await userStore.fetchUser()
   loadMyItems()
+  loadMyRatings()
 })
 
 async function loadMyItems() {
@@ -31,6 +37,22 @@ async function loadMyItems() {
   }
 }
 
+async function loadMyRatings() {
+  const userId = userStore.user?._id || userStore.user?.id
+  if (!userId) return
+  ratingsLoading.value = true
+  try {
+    const res = await getRatings({ userId })
+    ratings.value = res.ratings || []
+    avgScore.value = res.avgScore ?? 0
+    ratingCount.value = res.ratingCount ?? 0
+  } catch (e) {
+    // 静默处理
+  } finally {
+    ratingsLoading.value = false
+  }
+}
+
 function goEdit(item) {
   router.push(`/item/${item._id || item.id}`)
 }
@@ -43,6 +65,19 @@ async function handleDelete(item) {
     myItems.value = myItems.value.filter(i => (i._id || i.id) !== (item._id || item.id))
   } catch (e) {
     appStore.showToast('删除失败', 'error')
+  }
+}
+
+function stars(score) {
+  return '★'.repeat(score) + '☆'.repeat(5 - score)
+}
+
+function formatRatingTime(timeStr) {
+  if (!timeStr) return ''
+  try {
+    return new Date(timeStr).toLocaleDateString()
+  } catch {
+    return timeStr
   }
 }
 </script>
@@ -66,7 +101,7 @@ async function handleDelete(item) {
           </p>
         </div>
       </div>
-      <div class="profile-stats" v-if="userStore.user.creditScore !== undefined">
+      <div class="profile-stats">
         <div class="stat-item">
           <span class="stat-value">{{ userStore.user.creditScore || '-' }}</span>
           <span class="stat-label">信用评分</span>
@@ -75,7 +110,28 @@ async function handleDelete(item) {
           <span class="stat-value">{{ myItems.length }}</span>
           <span class="stat-label">发布物品</span>
         </div>
+        <div class="stat-item">
+          <span class="stat-value rating-stars-main">{{ avgScore > 0 ? avgScore.toFixed(1) : '-' }}</span>
+          <span class="stat-label">平均评分 ({{ ratingCount }}条)</span>
+        </div>
       </div>
+    </div>
+
+    <!-- 我收到的评价 -->
+    <h2 class="section-title">我收到的评价</h2>
+    <div v-if="ratingsLoading" class="empty-state">加载中...</div>
+    <div v-else-if="ratings.length" class="ratings-list">
+      <div v-for="r in ratings" :key="r.id" class="rating-card card">
+        <div class="rating-header">
+          <span class="rating-score">{{ stars(r.score) }}</span>
+          <span class="rating-date">{{ formatRatingTime(r.createdAt) }}</span>
+        </div>
+        <p v-if="r.comment" class="rating-comment">{{ r.comment }}</p>
+        <p v-else class="rating-comment empty-comment">未留下评价</p>
+      </div>
+    </div>
+    <div v-else class="empty-state">
+      <p>暂无评价</p>
     </div>
 
     <!-- 我发布的物品 -->
@@ -164,6 +220,10 @@ async function handleDelete(item) {
   color: var(--primary);
 }
 
+.rating-stars-main {
+  color: #f5a623;
+}
+
 .stat-label {
   font-size: 13px;
   color: var(--gray-500);
@@ -175,6 +235,48 @@ async function handleDelete(item) {
   color: var(--gray-800);
 }
 
+/* 评价列表 */
+.ratings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.rating-card {
+  padding: 16px 20px;
+}
+
+.rating-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.rating-score {
+  color: #f5a623;
+  font-size: 16px;
+  letter-spacing: 2px;
+}
+
+.rating-date {
+  font-size: 12px;
+  color: var(--gray-400);
+}
+
+.rating-comment {
+  font-size: 14px;
+  color: var(--gray-600);
+  line-height: 1.5;
+}
+
+.empty-comment {
+  color: var(--gray-400);
+  font-style: italic;
+}
+
+/* 物品列表 */
 .my-items-list {
   display: flex;
   flex-direction: column;

@@ -324,6 +324,18 @@ func UpdateReport(c *gin.Context) {
 					TargetID:    id,
 					CreatedAt:   model.TimeNow(),
 				})
+
+				// 通知举报人：举报处理结果
+				d.Notifications = append(d.Notifications, model.Notification{
+					ID:        service.GenID("ntf"),
+					UserID:    d.Reports[i].UserID,
+					Type:      "report_resolved",
+					Title:     "举报处理结果",
+					Content:   actionDesc,
+					RelatedID: id,
+					CreatedAt: model.TimeNow(),
+				})
+
 				break
 			}
 		}
