@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { getItems } from '../api/items'
 import { getRecommendations } from '../api/misc'
 import { useUserStore } from '../stores/user'
@@ -16,8 +16,21 @@ const recLoading = ref(false)
 const keyword = ref('')
 const category = ref('')
 const campus = ref('')
+const sortBy = ref('newest')
 
 const campusOptions = ['', '南湖校区', '东湖校区', '线上']
+const sortOptions = [
+  { value: 'newest', label: '最新发布' },
+  { value: 'views', label: '最多浏览' }
+]
+
+// 未登录时的热门推荐：取浏览量前6的可用物品
+const hotItems = computed(() => {
+  return [...items.value]
+    .filter(i => i.status === 'available')
+    .sort((a, b) => (b.views || 0) - (a.views || 0))
+    .slice(0, 6)
+})
 
 onMounted(() => {
   if (!appStore.categories.length) appStore.fetchCategories()
@@ -32,6 +45,7 @@ async function loadItems() {
     if (keyword.value) params.keyword = keyword.value
     if (category.value) params.category = category.value
     if (campus.value) params.campus = campus.value
+    if (sortBy.value) params.sortBy = sortBy.value
     const res = await getItems(params)
     items.value = res.items || res || []
   } catch (e) {
@@ -57,6 +71,14 @@ async function loadRecommendations() {
 function handleSearch() {
   loadItems()
 }
+
+function resetFilters() {
+  keyword.value = ''
+  category.value = ''
+  campus.value = ''
+  sortBy.value = 'newest'
+  loadItems()
+}
 </script>
 
 <template>
@@ -66,20 +88,24 @@ function handleSearch() {
     <!-- 搜索栏 -->
     <div class="search-bar">
       <input v-model="keyword" class="form-input" placeholder="搜索物品..." @keyup.enter="handleSearch" />
-      <select v-model="category" class="form-input">
+      <select v-model="category" class="form-input" @change="handleSearch">
         <option value="">全部分类</option>
         <option v-for="cat in appStore.categories" :key="cat._id || cat.id || cat.name" :value="cat._id || cat.id || cat.name">
           {{ cat.name || cat }}
         </option>
       </select>
-      <select v-model="campus" class="form-input">
+      <select v-model="campus" class="form-input" @change="handleSearch">
         <option value="">全部校区</option>
         <option v-for="c in campusOptions.slice(1)" :key="c" :value="c">{{ c }}</option>
       </select>
+      <select v-model="sortBy" class="form-input" @change="handleSearch">
+        <option v-for="s in sortOptions" :key="s.value" :value="s.value">{{ s.label }}</option>
+      </select>
       <button class="btn btn-primary" @click="handleSearch">搜索</button>
+      <button class="btn btn-secondary" @click="resetFilters">重置</button>
     </div>
 
-    <!-- 为你推荐 -->
+    <!-- 为你推荐（已登录） -->
     <div v-if="userStore.isLoggedIn && recommendations.length" class="recommend-section">
       <div class="section-header">
         <h2 class="section-title">✨ 为你推荐</h2>
@@ -92,9 +118,23 @@ function handleSearch() {
       </div>
     </div>
 
+    <!-- 热门推荐（未登录） -->
+    <div v-if="!userStore.isLoggedIn && hotItems.length" class="recommend-section hot-section">
+      <div class="section-header">
+        <h2 class="section-title">🔥 热门物品</h2>
+        <span class="section-hint">登录后查看个性化推荐</span>
+      </div>
+      <div class="rec-scroll">
+        <div v-for="item in hotItems" :key="item._id || item.id" class="rec-item">
+          <ItemCard :item="item" />
+        </div>
+      </div>
+    </div>
+
     <!-- 全部物品 -->
-    <div v-if="userStore.isLoggedIn && recommendations.length" class="all-items-header">
+    <div class="all-items-header">
       <h2 class="section-title">📦 全部物品</h2>
+      <span class="item-count">共 {{ items.length }} 件</span>
     </div>
 
     <!-- 加载状态 -->
@@ -108,6 +148,7 @@ function handleSearch() {
     <!-- 空状态 -->
     <div v-else class="empty-state">
       <p>暂无物品，快来发布第一件闲置吧！</p>
+      <router-link v-if="userStore.isLoggedIn" to="/publish" class="btn btn-primary" style="margin-top:12px">去发布</router-link>
     </div>
   </div>
 </template>
@@ -136,6 +177,11 @@ function handleSearch() {
   background: linear-gradient(135deg, #f0f7ff 0%, #f5f0ff 100%);
   border-radius: var(--radius);
   border: 1px solid #e0e8f5;
+}
+
+.hot-section {
+  background: linear-gradient(135deg, #fff8f0 0%, #fff0f0 100%);
+  border-color: #f5e0d8;
 }
 
 .section-header {
@@ -180,5 +226,13 @@ function handleSearch() {
 
 .all-items-header {
   margin-bottom: 16px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.item-count {
+  font-size: 13px;
+  color: var(--gray-400);
 }
 </style>

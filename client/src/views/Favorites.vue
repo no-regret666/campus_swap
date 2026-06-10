@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { getFavorites, removeFavorite } from '../api/favorites'
 import { useAppStore } from '../stores/app'
 import ItemCard from '../components/ItemCard.vue'
@@ -24,6 +24,16 @@ async function loadFavorites() {
   }
 }
 
+// 过滤掉物品已被删除的收藏
+const validFavorites = computed(() => {
+  return favorites.value.filter(f => {
+    const it = f.item || f
+    return it && it.id
+  })
+})
+
+const removedCount = computed(() => favorites.value.length - validFavorites.value.length)
+
 async function handleRemove(item) {
   try {
     await removeFavorite(item._id || item.id)
@@ -42,8 +52,8 @@ async function handleRemove(item) {
 
     <div v-if="loading" class="empty-state">加载中...</div>
 
-    <div v-else-if="favorites.length" class="grid-items">
-      <div v-for="item in favorites" :key="item._id || item.id" class="fav-item">
+    <div v-else-if="validFavorites.length" class="grid-items">
+      <div v-for="item in validFavorites" :key="item._id || item.id" class="fav-item">
         <ItemCard :item="item.item || item" />
         <button class="btn btn-danger btn-sm remove-btn" @click="handleRemove(item.item || item)">
           取消收藏
@@ -51,8 +61,13 @@ async function handleRemove(item) {
       </div>
     </div>
 
-    <div v-else class="empty-state">
+    <div v-if="removedCount > 0" class="removed-hint">
+      有 {{ removedCount }} 件收藏物品已下架
+    </div>
+
+    <div v-if="!loading && !validFavorites.length" class="empty-state">
       <p>暂无收藏的物品</p>
+      <p v-if="removedCount > 0" class="sub-hint">部分收藏物品已被发布者删除</p>
     </div>
   </div>
 </template>
@@ -67,5 +82,21 @@ async function handleRemove(item) {
   top: 8px;
   left: 8px;
   z-index: 2;
+}
+
+.removed-hint {
+  margin-top: 16px;
+  padding: 10px 14px;
+  background: var(--gray-100);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--gray-500);
+  text-align: center;
+}
+
+.sub-hint {
+  font-size: 13px;
+  color: var(--gray-400);
+  margin-top: 8px;
 }
 </style>

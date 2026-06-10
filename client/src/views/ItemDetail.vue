@@ -34,11 +34,24 @@ const editForm = ref({})
 const editUploading = ref(false)
 
 const isOwner = computed(() => {
-  if (!item.value) return true
+  if (!item.value) return false
   if (!userStore.user) return false
   const itemOwnerId = item.value.ownerId || item.value.owner?.id || item.value.owner
   const userId = userStore.user.id || userStore.user._id
   return itemOwnerId === userId
+})
+
+// 多图展示
+const currentImageIndex = ref(0)
+const showLightbox = ref(false)
+
+const displayDate = computed(() => {
+  if (!item.value || !item.value.createdAt) return '未知时间'
+  try {
+    return new Date(item.value.createdAt).toLocaleDateString()
+  } catch {
+    return item.value.createdAt
+  }
 })
 
 onMounted(async () => {
@@ -188,8 +201,18 @@ async function handleDelete() {
     <div v-else-if="item" class="detail-page">
       <!-- 图片 -->
       <div class="detail-image">
-        <img v-if="item.images && item.images.length" :src="item.images[0]" :alt="item.title" />
-        <div v-else class="img-placeholder">📦</div>
+        <div class="main-image" @click="showLightbox = true">
+          <img v-if="item.images && item.images.length" :src="item.images[currentImageIndex]" :alt="item.title" />
+          <div v-else class="img-placeholder">📦</div>
+          <!-- 左右切换 -->
+          <button v-if="item.images && item.images.length > 1" class="img-nav img-prev" @click.stop="currentImageIndex = (currentImageIndex - 1 + item.images.length) % item.images.length">‹</button>
+          <button v-if="item.images && item.images.length > 1" class="img-nav img-next" @click.stop="currentImageIndex = (currentImageIndex + 1) % item.images.length">›</button>
+          <span v-if="item.images && item.images.length > 1" class="img-counter">{{ currentImageIndex + 1 }} / {{ item.images.length }}</span>
+        </div>
+        <!-- 缩略图 -->
+        <div v-if="item.images && item.images.length > 1" class="thumb-list">
+          <img v-for="(img, idx) in item.images" :key="idx" :src="img" :class="['thumb-item', { active: idx === currentImageIndex }]" @click="currentImageIndex = idx" />
+        </div>
       </div>
 
       <!-- 信息 -->
@@ -200,7 +223,7 @@ async function handleDelete() {
           <span class="badge badge-success">{{ item.condition || '未标注' }}</span>
           <span>📍 {{ item.campus || '未知校区' }}</span>
           <span>👁 {{ item.views || 0 }} 次浏览</span>
-          <span>📅 {{ new Date(item.createdAt).toLocaleDateString() }}</span>
+          <span>📅 {{ displayDate }}</span>
         </div>
         <div class="detail-desc">
           <h3>物品描述</h3>
@@ -283,6 +306,15 @@ async function handleDelete() {
           <textarea v-model="editForm.description" class="form-input" rows="3" placeholder="物品描述"></textarea>
         </div>
         <div class="form-group">
+          <label>分类</label>
+          <select v-model="editForm.category" class="form-input">
+            <option value="">请选择分类</option>
+            <option v-for="cat in appStore.categories" :key="cat._id || cat.id || cat.name" :value="cat._id || cat.id || cat.name">
+              {{ cat.name || cat }}
+            </option>
+          </select>
+        </div>
+        <div class="form-group">
           <label>校区</label>
           <select v-model="editForm.campus" class="form-input">
             <option value="南湖校区">南湖校区</option>
@@ -323,6 +355,14 @@ async function handleDelete() {
         </div>
       </div>
     </div>
+
+    <!-- 图片放大预览 -->
+    <div v-if="showLightbox" class="modal-overlay lightbox" @click.self="showLightbox = false">
+      <img v-if="item.images && item.images.length" :src="item.images[currentImageIndex]" class="lightbox-img" />
+      <button v-if="item.images && item.images.length > 1" class="img-nav img-prev" @click.stop="currentImageIndex = (currentImageIndex - 1 + item.images.length) % item.images.length">‹</button>
+      <button v-if="item.images && item.images.length > 1" class="img-nav img-next" @click.stop="currentImageIndex = (currentImageIndex + 1) % item.images.length">›</button>
+      <button class="lightbox-close" @click="showLightbox = false">×</button>
+    </div>
   </div>
 </template>
 
@@ -334,14 +374,20 @@ async function handleDelete() {
 
 .detail-image {
   width: 100%;
-  height: 350px;
   border-radius: var(--radius);
   overflow: hidden;
   background: var(--gray-100);
   margin-bottom: 24px;
 }
 
-.detail-image img {
+.main-image {
+  position: relative;
+  width: 100%;
+  height: 350px;
+  cursor: zoom-in;
+}
+
+.main-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -354,6 +400,110 @@ async function handleDelete() {
   align-items: center;
   justify-content: center;
   font-size: 80px;
+}
+
+.img-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.img-nav:hover {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.img-prev {
+  left: 12px;
+}
+
+.img-next {
+  right: 12px;
+}
+
+.img-counter {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.thumb-list {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  background: #fff;
+  justify-content: center;
+}
+
+.thumb-item {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  opacity: 0.7;
+  transition: all 0.2s;
+}
+
+.thumb-item.active,
+.thumb-item:hover {
+  border-color: var(--primary);
+  opacity: 1;
+}
+
+.lightbox {
+  background: rgba(0, 0, 0, 0.85);
+}
+
+.lightbox-img {
+  max-width: 90vw;
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.lightbox .img-nav {
+  width: 44px;
+  height: 44px;
+  font-size: 24px;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-close:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .detail-info {

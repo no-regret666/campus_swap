@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"sort"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -10,12 +11,13 @@ import (
 	"campus-swap-server/internal/service"
 )
 
-// GetItems 获取物品列表（支持筛选）
+// GetItems 获取物品列表（支持筛选、排序）
 func GetItems(c *gin.Context) {
 	keyword := c.Query("keyword")
 	category := c.Query("category")
 	campus := c.Query("campus")
 	owner := c.Query("owner")
+	sortBy := c.Query("sortBy") // views / newest，默认 newest
 
 	var results []model.Item
 	service.WithRead(func(d *model.Database) {
@@ -46,6 +48,15 @@ func GetItems(c *gin.Context) {
 			}
 			results = append(results, item)
 		}
+
+		// 排序
+		sort.Slice(results, func(i, j int) bool {
+			if sortBy == "views" {
+				return results[j].Views < results[i].Views
+			}
+			// 默认按时间 newest 倒序
+			return results[j].CreatedAt < results[i].CreatedAt
+		})
 	})
 
 	if results == nil {
@@ -68,6 +79,7 @@ func GetItem(c *gin.Context) {
 
 	var found *model.Item
 	var ownerName string
+	var isFavorited bool
 	service.WithWrite(func(d *model.Database) {
 		for i := range d.Items {
 			if d.Items[i].ID == id {
@@ -95,6 +107,13 @@ func GetItem(c *gin.Context) {
 					Category:  found.Category,
 					CreatedAt: model.TimeNow(),
 				})
+				// 检查是否已收藏
+				for _, fav := range d.Favorites {
+					if fav.UserID == userIdStr && fav.ItemID == id {
+						isFavorited = true
+						break
+					}
+				}
 			}
 		}
 	})
@@ -105,9 +124,10 @@ func GetItem(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message":   "ok",
-		"item":      *found,
-		"ownerName": ownerName,
+		"message":     "ok",
+		"item":        *found,
+		"ownerName":   ownerName,
+		"isFavorited": isFavorited,
 	})
 }
 
