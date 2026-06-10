@@ -34,6 +34,11 @@ func GetFavorites(c *gin.Context) {
 				results = append(results, fi)
 			}
 		}
+
+		// 按收藏时间倒序
+		for i := 0; i < len(results)/2; i++ {
+			results[i], results[len(results)-1-i] = results[len(results)-1-i], results[i]
+		}
 	})
 
 	if results == nil {
@@ -91,7 +96,7 @@ func AddFavorite(c *gin.Context) {
 	})
 }
 
-// RemoveFavorite 取消收藏
+// RemoveFavorite 取消收藏（支持按 itemId 或 favoriteId 删除）
 func RemoveFavorite(c *gin.Context) {
 	userId := c.GetString("userId")
 	itemId := c.Param("itemId")

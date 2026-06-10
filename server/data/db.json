@@ -136,7 +136,7 @@
       "ownerId": "u1",
       "wantExchange": "想换Kindle或蓝牙耳机",
       "status": "available",
-      "views": 18,
+      "views": 19,
       "createdAt": "2026-05-05 09:20:00"
     },
     {
@@ -727,6 +727,12 @@
       "userId": "u3",
       "itemId": "item26",
       "createdAt": "2026-05-12 09:00:00"
+    },
+    {
+      "id": "fav_1781069743008_2141",
+      "userId": "u1",
+      "itemId": "item5",
+      "createdAt": "2026-06-10 13:35:43"
     }
   ],
   "reports": [],
@@ -921,6 +927,13 @@
       "itemId": "item11",
       "category": "digital",
       "createdAt": "2026-06-09 18:44:19"
+    },
+    {
+      "id": "br_1781069740489_7244",
+      "userId": "u1",
+      "itemId": "item5",
+      "category": "digital",
+      "createdAt": "2026-06-10 13:35:40"
     }
   ]
 }
