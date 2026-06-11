@@ -12,8 +12,9 @@ import (
 	"campus-swap-server/internal/service"
 )
 
-// SafeUser 返回不含密码的用户信息
+// SafeUser 返回不含密码的用户信息（含信用等级）
 func SafeUser(u model.User) gin.H {
+	level, badge := creditLevel(u.CreditScore)
 	return gin.H{
 		"id":          u.ID,
 		"username":    u.Username,
@@ -22,6 +23,24 @@ func SafeUser(u model.User) gin.H {
 		"role":        u.Role,
 		"campus":      u.Campus,
 		"creditScore": u.CreditScore,
+		"creditLevel": level,
+		"creditBadge": badge,
+	}
+}
+
+// creditLevel 根据信用分计算等级和徽章
+func creditLevel(score int) (string, string) {
+	switch {
+	case score >= 150:
+		return "信赖", "🏆"
+	case score >= 120:
+		return "优秀", "⭐"
+	case score >= 90:
+		return "活跃", "🌟"
+	case score >= 60:
+		return "普通", "👤"
+	default:
+		return "警示", "⚠️"
 	}
 }
 

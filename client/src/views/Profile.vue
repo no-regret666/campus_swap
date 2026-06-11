@@ -109,6 +109,10 @@ function formatRatingTime(timeStr) {
           <span class="stat-label">信用评分</span>
         </div>
         <div class="stat-item">
+          <span class="stat-value credit-badge">{{ userStore.user.creditBadge || '🌟' }} {{ userStore.user.creditLevel || '活跃' }}</span>
+          <span class="stat-label">信用等级</span>
+        </div>
+        <div class="stat-item">
           <span class="stat-value">{{ myItems.length }}</span>
           <span class="stat-label">发布物品</span>
         </div>
@@ -224,6 +228,15 @@ function formatRatingTime(timeStr) {
 
 .rating-stars-main {
   color: #f5a623;
+}
+
+.credit-badge {
+  font-size: 16px !important;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
 }
 
 .stat-label {

@@ -39,6 +39,16 @@
       "role": "admin",
       "campus": "主校区",
       "creditScore": 100
+    },
+    {
+      "id": "u_1781180344399_6148",
+      "username": "23043107",
+      "password": "WangWang",
+      "nickname": "noregret",
+      "avatar": "",
+      "role": "student",
+      "campus": "南湖校区",
+      "creditScore": 100
     }
   ],
   "categories": [
@@ -136,7 +146,7 @@
       "ownerId": "u1",
       "wantExchange": "想换Kindle或蓝牙耳机",
       "status": "available",
-      "views": 19,
+      "views": 18,
       "createdAt": "2026-05-05 09:20:00"
     },
     {
@@ -164,7 +174,7 @@
       "ownerId": "u1",
       "wantExchange": "手账素材或彩铅",
       "status": "available",
-      "views": 10,
+      "views": 9,
       "createdAt": "2026-05-07 15:30:00"
     },
     {
@@ -220,7 +230,7 @@
       "ownerId": "u2",
       "wantExchange": "iPad或手绘板",
       "status": "available",
-      "views": 22,
+      "views": 20,
       "createdAt": "2026-05-02 16:00:00"
     },
     {
@@ -544,6 +554,22 @@
       "status": "available",
       "views": 5,
       "createdAt": "2026-05-15 11:00:00"
+    },
+    {
+      "id": "item_1781188396858_7793",
+      "title": "热水壶",
+      "description": "诚意出交换，【热水壶】仅使用过几次，几乎看不出使用痕迹，功能完好。目前在南湖校区，支持面交验货。欢迎交换，让闲置物品找到新主人！",
+      "images": [
+        "/uploads/1781188369364439000_20260611-222535.jpg"
+      ],
+      "category": "life",
+      "campus": "南湖校区",
+      "condition": "九成新",
+      "ownerId": "u1",
+      "wantExchange": "",
+      "status": "available",
+      "views": 0,
+      "createdAt": "2026-06-11 22:33:16"
     }
   ],
   "exchanges": [
@@ -620,7 +646,7 @@
       "senderId": "u2",
       "content": "你好，iPad还在吗？我想用尤克里里交换",
       "images": null,
-      "isRead": true,
+      "isRead": false,
       "isDeleted": false,
       "createdAt": "2026-05-10 08:00:00"
     },
@@ -630,7 +656,7 @@
       "senderId": "u1",
       "content": "在的，你的尤克里里是什么牌子？",
       "images": null,
-      "isRead": false,
+      "isRead": true,
       "isDeleted": false,
       "createdAt": "2026-05-10 08:30:00"
     },
@@ -673,16 +699,6 @@
       "isRead": false,
       "isDeleted": false,
       "createdAt": "2026-05-08 10:25:00"
-    },
-    {
-      "id": "msg_1781002181766_0813",
-      "exchangeId": "ex4",
-      "senderId": "u3",
-      "content": "hi",
-      "images": null,
-      "isRead": true,
-      "isDeleted": false,
-      "createdAt": "2026-06-09 18:49:41"
     }
   ],
   "favorites": [
@@ -727,12 +743,6 @@
       "userId": "u3",
       "itemId": "item26",
       "createdAt": "2026-05-12 09:00:00"
-    },
-    {
-      "id": "fav_1781069743008_2141",
-      "userId": "u1",
-      "itemId": "item5",
-      "createdAt": "2026-06-10 13:35:43"
     }
   ],
   "reports": [],
@@ -774,18 +784,7 @@
       "createdAt": "2026-05-12 18:35:00"
     }
   ],
-  "notifications": [
-    {
-      "id": "ntf_1781002181766_9702",
-      "userId": "u1",
-      "type": "new_message",
-      "title": "收到新消息",
-      "content": "你有一条新的交换沟通消息",
-      "isRead": false,
-      "relatedId": "ex4",
-      "createdAt": "2026-06-09 18:49:41"
-    }
-  ],
+  "notifications": null,
   "auditLogs": null,
   "browseRecords": [
     {
@@ -906,34 +905,6 @@
       "itemId": "item19",
       "category": "skill",
       "createdAt": "2026-05-05 19:10:00"
-    },
-    {
-      "id": "br_1781001750147_8569",
-      "userId": "u1",
-      "itemId": "item7",
-      "category": "art",
-      "createdAt": "2026-06-09 18:42:30"
-    },
-    {
-      "id": "br_1781001831749_4560",
-      "userId": "u1",
-      "itemId": "item11",
-      "category": "digital",
-      "createdAt": "2026-06-09 18:43:51"
-    },
-    {
-      "id": "br_1781001859484_4810",
-      "userId": "u1",
-      "itemId": "item11",
-      "category": "digital",
-      "createdAt": "2026-06-09 18:44:19"
-    },
-    {
-      "id": "br_1781069740489_7244",
-      "userId": "u1",
-      "itemId": "item5",
-      "category": "digital",
-      "createdAt": "2026-06-10 13:35:40"
     }
   ]
 }

@@ -113,6 +113,9 @@ func main() {
 	// 文件上传（模拟对象存储）
 	api.POST("/upload", middleware.AuthMiddleware(), handler.UploadImage)
 
+	// AI 智能生成
+	api.POST("/ai/generate-description", middleware.AuthMiddleware(), handler.GenerateDescription)
+
 	// 静态文件服务（模拟对象存储CDN）
 	r.Static("/uploads", "./uploads")
 

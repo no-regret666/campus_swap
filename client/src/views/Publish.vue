@@ -1,8 +1,9 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { createItem } from '../api/items'
 import { uploadImage } from '../api/upload'
+import { generateDescription } from '../api/misc'
 import { useAppStore } from '../stores/app'
 import BackButton from '../components/BackButton.vue'
 
@@ -11,7 +12,9 @@ const appStore = useAppStore()
 
 const loading = ref(false)
 const uploading = ref(false)
+const aiGenerating = ref(false)
 const imageList = ref([]) // 已上传图片列表 [{url, filename}]
+const hasDraft = ref(false)
 const form = ref({
   title: '',
   description: '',
@@ -24,8 +27,87 @@ const form = ref({
 const campusOptions = ['南湖校区', '东湖校区', '线上']
 const conditionOptions = ['全新', '九成新', '八成新', '七成新', '六成新及以下']
 
+const DRAFT_KEY = 'campus_swap_publish_draft'
+
+// 自动保存草稿（防抖）
+let saveTimer = null
+watch(form, () => {
+  clearTimeout(saveTimer)
+  saveTimer = setTimeout(saveDraft, 1500)
+}, { deep: true })
+
+watch(imageList, () => {
+  clearTimeout(saveTimer)
+  saveTimer = setTimeout(saveDraft, 1500)
+}, { deep: true })
+
+function saveDraft() {
+  const draft = {
+    form: form.value,
+    images: imageList.value.map(img => ({ url: img.url, filename: img.filename })),
+    savedAt: new Date().toISOString()
+  }
+  localStorage.setItem(DRAFT_KEY, JSON.stringify(draft))
+}
+
+function loadDraft() {
+  const raw = localStorage.getItem(DRAFT_KEY)
+  if (!raw) return
+  try {
+    const draft = JSON.parse(raw)
+    if (draft.form && (draft.form.title || draft.form.description)) {
+      hasDraft.value = true
+    }
+  } catch {}
+}
+
+function restoreDraft() {
+  const raw = localStorage.getItem(DRAFT_KEY)
+  if (!raw) return
+  try {
+    const draft = JSON.parse(raw)
+    if (draft.form) {
+      form.value = { ...form.value, ...draft.form }
+    }
+    if (draft.images && draft.images.length) {
+      imageList.value = draft.images
+    }
+    hasDraft.value = false
+    appStore.showToast('草稿已恢复', 'success')
+  } catch {}
+}
+
+function clearDraft() {
+  localStorage.removeItem(DRAFT_KEY)
+  hasDraft.value = false
+}
+
+// AI 生成描述
+async function handleAIGenerate() {
+  if (!form.value.title && !form.value.category) {
+    appStore.showToast('请先填写标题或选择分类', 'warning')
+    return
+  }
+  aiGenerating.value = true
+  try {
+    const res = await generateDescription({
+      title: form.value.title,
+      category: form.value.category,
+      condition: form.value.condition,
+      campus: form.value.campus
+    })
+    form.value.description = res.description || res
+    appStore.showToast('AI 描述已生成', 'success')
+  } catch (e) {
+    appStore.showToast('AI 生成失败，请手动填写', 'error')
+  } finally {
+    aiGenerating.value = false
+  }
+}
+
 onMounted(() => {
   if (!appStore.categories.length) appStore.fetchCategories()
+  loadDraft()
 })
 
 // 选择本地图片并上传
@@ -84,6 +166,7 @@ async function handleSubmit() {
     }
     if (!data.images.length) delete data.images
     await createItem(data)
+    clearDraft() // 发布成功清除草稿
     appStore.showToast('发布成功', 'success')
     router.push('/')
   } catch (e) {
@@ -99,6 +182,15 @@ async function handleSubmit() {
     <BackButton />
     <h1 class="page-title">发布闲置物品</h1>
 
+    <!-- 草稿恢复提示 -->
+    <div v-if="hasDraft" class="draft-banner">
+      <span>📝 检测到未完成的草稿</span>
+      <div class="draft-actions">
+        <button class="btn btn-primary btn-sm" @click="restoreDraft">恢复草稿</button>
+        <button class="btn btn-secondary btn-sm" @click="clearDraft">丢弃</button>
+      </div>
+    </div>
+
     <div class="publish-card card">
       <form @submit.prevent="handleSubmit">
         <div class="form-group">
@@ -109,6 +201,9 @@ async function handleSubmit() {
         <div class="form-group">
           <label>物品描述 *</label>
           <textarea v-model="form.description" class="form-input" rows="4" placeholder="详细描述物品信息..."></textarea>
+          <button type="button" class="ai-btn" @click="handleAIGenerate" :disabled="aiGenerating">
+            {{ aiGenerating ? '🤖 生成中...' : '🤖 AI 智能生成描述' }}
+          </button>
         </div>
 
         <div class="form-group">
@@ -184,6 +279,49 @@ async function handleSubmit() {
 </template>
 
 <style scoped>
+/* 草稿恢复提示 */
+.draft-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 14px;
+}
+
+.draft-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* AI 生成按钮 */
+.ai-btn {
+  margin-top: 8px;
+  padding: 6px 14px;
+  border: 1px solid #7c4dff;
+  background: linear-gradient(135deg, #7c4dff, #448aff);
+  color: #fff;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.ai-btn:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.ai-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .publish-card {
   max-width: 600px;
   margin: 0 auto;
