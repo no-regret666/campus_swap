@@ -4,6 +4,7 @@ import { useUserStore } from '../stores/user'
 const routes = [
   { path: '/login', name: 'Login', component: () => import('../views/Login.vue'), meta: { guest: true } },
   { path: '/', name: 'Home', component: () => import('../views/Home.vue') },
+  { path: '/recommend', name: 'Recommend', component: () => import('../views/Recommend.vue') },
   { path: '/item/:id', name: 'ItemDetail', component: () => import('../views/ItemDetail.vue') },
   { path: '/publish', name: 'Publish', component: () => import('../views/Publish.vue'), meta: { auth: true } },
   { path: '/exchanges', name: 'Exchanges', component: () => import('../views/Exchanges.vue'), meta: { auth: true } },

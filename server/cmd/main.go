@@ -75,6 +75,7 @@ func main() {
 		messages.GET("/unread/by-exchange", handler.GetAllUnreadByExchange)
 		messages.POST("/:exchangeId/read", handler.MarkMessagesRead)
 		messages.DELETE("/:id", handler.DeleteMessage)
+		messages.DELETE("/:id", handler.DeleteMessage)
 	}
 
 	// 收藏路由
